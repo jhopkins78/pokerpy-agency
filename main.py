@@ -146,10 +146,10 @@ with app.app_context():
         
         try:
             db.session.commit()
-            print("✅ Learning modules initialized successfully")
+            print("Learning modules initialized successfully")
         except Exception as e:
             db.session.rollback()
-            print(f"❌ Error initializing learning modules: {e}")
+            print(f"Error initializing learning modules: {e}")
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -244,10 +244,10 @@ def serve(path):
                         <h1>🃏 PokerPy Agentic Backend</h1>
                         
                         <div class="status">
-                            <strong>✅ System Status:</strong> All systems operational<br>
-                            <strong>🤖 AI Agents:</strong> Hand Analyzer, Coach, Learning Path, Community<br>
-                            <strong>🔌 WebSockets:</strong> Real-time chat and updates enabled<br>
-                            <strong>🔐 Authentication:</strong> JWT-based user management
+                            <strong>System Status:</strong> All systems operational<br>
+                            <strong>AI Agents:</strong> Hand Analyzer, Coach, Learning Path, Community<br>
+                            <strong>WebSockets:</strong> Real-time chat and updates enabled<br>
+                            <strong>Authentication:</strong> JWT-based user management
                         </div>
                         
                         <h2>🔗 API Endpoints</h2>
@@ -274,14 +274,14 @@ def serve(path):
                         <div class="endpoint"><span class="post">POST</span> /api/agents/community/posts - Create community posts</div>
                         <div class="endpoint"><span class="get">GET</span> /api/agents/community/feed - Get community feed</div>
                         
-                        <h2>🤖 Agentic System Features</h2>
+                        <h2>Agentic System Features</h2>
                         <div class="feature"><strong>Hand Analyzer Agent:</strong> Technical poker analysis with GTO insights</div>
                         <div class="feature"><strong>AI Coach Agent:</strong> Plain English explanations and personalized coaching</div>
                         <div class="feature"><strong>Learning Path Agent:</strong> Adaptive curriculum and progress tracking</div>
                         <div class="feature"><strong>Community Agent:</strong> Social features with moderation and reputation</div>
                         <div class="feature"><strong>Orchestrator:</strong> Workflow coordination and agent communication</div>
                         
-                        <h2>🔌 Real-time Features</h2>
+                        <h2>Real-time Features</h2>
                         <div class="feature"><strong>WebSocket Chat:</strong> Instant AI coach responses</div>
                         <div class="feature"><strong>Live Hand Analysis:</strong> Real-time hand processing with progress updates</div>
                         <div class="feature"><strong>Community Updates:</strong> Live notifications for posts and comments</div>
@@ -306,16 +306,22 @@ def internal_error(error):
     return {"error": "Internal server error"}, 500
 
 if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description="PokerPy Agentic Backend")
+    parser.add_argument('--port', type=int, default=5000, help='Port to run the backend on')
+    args = parser.parse_args()
+    port = args.port
+
     print("🚀 Starting PokerPy Agentic Backend...")
     print("🤖 Initializing AI agents...")
     print("📊 Setting up database...")
     print("🔌 Enabling WebSocket support...")
     print("🔐 Configuring authentication...")
     print("🌐 Enabling CORS for frontend communication...")
-    print("✅ Backend ready at http://0.0.0.0:5000")
-    print("🔗 WebSocket endpoint: ws://0.0.0.0:5000")
+    print(f"✅ Backend ready at http://0.0.0.0:{port}")
+    print(f"🔗 WebSocket endpoint: ws://0.0.0.0:{port}")
     print("📚 API documentation available at root URL")
     
     # Run with SocketIO support
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
-
+    socketio.run(app, host='0.0.0.0', port=port, debug=True)

@@ -1,4 +1,6 @@
 # Core Flask dependencies
+flask_socketio
+
 blinker==1.9.0
 click==8.2.1
 Flask==3.1.1
@@ -51,4 +53,3 @@ eventlet==0.33.3  # For SocketIO production deployment
 
 # Environment and configuration
 python-decouple==3.8
-

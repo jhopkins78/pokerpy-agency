@@ -9,14 +9,12 @@ import asyncio
 import json
 from typing import Dict, Any
 
-from src.agents import (
-    AgentOrchestrator, 
-    HandAnalyzerAgent, 
-    CoachAgent, 
-    LearningPathAgent, 
-    CommunityAgent,
-    AgentMessage
-)
+from src.models.orchestrator import AgentOrchestrator
+from src.models.hand_analyzer import HandAnalyzerAgent
+from src.models.coach import CoachAgent
+from src.models.learning_path import LearningPathAgent
+from src.models.community import CommunityAgent
+from src.models.base_agent import AgentMessage
 
 # Create blueprint
 agents_bp = Blueprint('agents', __name__)
@@ -589,4 +587,3 @@ def method_not_allowed(error):
 @agents_bp.errorhandler(500)
 def internal_error(error):
     return jsonify({"error": "Internal server error"}), 500
-

@@ -11,7 +11,9 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 import uuid
 
-from src.agents import CoachAgent, HandAnalyzerAgent, AgentMessage
+from src.models.coach import CoachAgent
+from src.models.hand_analyzer import HandAnalyzerAgent
+from src.models.base_agent import AgentMessage
 
 class ChatHandler:
     """Handles real-time chat with AI coach"""
@@ -448,4 +450,3 @@ def create_websocket_handlers(socketio: SocketIO) -> Dict[str, Any]:
         'community': community_handler,
         'progress': progress_handler
     }
-

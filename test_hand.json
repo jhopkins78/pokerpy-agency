@@ -1,0 +1,6 @@
+{
+    "hand_history": "PokerStars Hand #20250709001:  Hold'em No Limit ($0.50/$1.00 USD) - 2025/07/09 20:15:00 ET\nTable 'PythonPoker' 6-max Seat #1 is the button\nSeat 1: Hero ($100 in chips)\nSeat 2: Villain ($100 in chips)\n*** HOLE CARDS ***\nHero: raises to $3\nVillain: calls $3\n*** FLOP *** [As Kh 7d]\nHero: bets $4\nVillain: calls $4\n*** TURN *** [As Kh 7d] [3c]\nHero: checks\nVillain: bets $8\nHero: calls $8\n*** RIVER *** [As Kh 7d 3c] [Tc]\nHero: checks\nVillain: bets $18\nHero: folds",
+    "player_position": "BTN",
+    "stack_size": 100,
+    "analysis_depth": "basic"
+}
