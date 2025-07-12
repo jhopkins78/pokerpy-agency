@@ -1,0 +1,109 @@
+{
+  "coaching_agent": {
+    "default_style": "supportive",
+    "response_max_tokens": 1000,
+    "temperature": 0.7,
+    "model": "gpt-4",
+    "embedding_model": "text-embedding-ada-002",
+    "max_context_length": 8000,
+    "personality_traits": {
+      "empathy": 0.8,
+      "directness": 0.6,
+      "humor": 0.4,
+      "technical_depth": 0.7
+    }
+  },
+  "rag_system": {
+    "chunk_size": 500,
+    "chunk_overlap": 50,
+    "similarity_threshold": 0.7,
+    "max_results": 5,
+    "categories": [
+      "poker_strategy",
+      "psychology",
+      "probability",
+      "game_theory",
+      "personal_development",
+      "bankroll_management",
+      "tournament_strategy",
+      "cash_game_strategy"
+    ]
+  },
+  "simulation_room": {
+    "default_stack_size": 200,
+    "default_blinds": [1, 2],
+    "max_players": 9,
+    "scenarios": {
+      "beginner": [
+        "basic_preflop",
+        "simple_postflop",
+        "value_betting"
+      ],
+      "intermediate": [
+        "bluff_spots",
+        "multi_way_pots",
+        "position_play"
+      ],
+      "advanced": [
+        "tournament_bubble",
+        "gto_concepts",
+        "exploitative_play"
+      ]
+    },
+    "feedback_delay": 2,
+    "auto_advance": false
+  },
+  "goal_tracker": {
+    "categories": [
+      "poker",
+      "mental",
+      "financial",
+      "personal",
+      "health"
+    ],
+    "default_milestones": [0.25, 0.5, 0.75, 1.0],
+    "habit_frequencies": ["daily", "weekly", "monthly"],
+    "success_metrics": {
+      "completion_rate": 0.8,
+      "consistency_score": 0.7,
+      "improvement_rate": 0.1
+    }
+  },
+  "memory_manager": {
+    "cache_size": 1000,
+    "conversation_history_limit": 100,
+    "session_history_limit": 500,
+    "habit_history_days": 365,
+    "auto_cleanup_days": 730,
+    "backup_frequency": "daily"
+  },
+  "api_settings": {
+    "rate_limits": {
+      "chat": "60/minute",
+      "simulation": "30/minute",
+      "goals": "100/minute",
+      "search": "120/minute"
+    },
+    "cors_origins": ["http://localhost:3000", "https://your-domain.com"],
+    "max_request_size": "10MB",
+    "timeout": 30
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "logs/pokerpy.log",
+    "max_size": "10MB",
+    "backup_count": 5
+  },
+  "features": {
+    "daily_insights": true,
+    "ask_anything_mode": true,
+    "habit_tracking": true,
+    "simulation_room": true,
+    "goal_analytics": true,
+    "psychological_profiling": true,
+    "voice_integration": false,
+    "video_analysis": false
+  }
+}
+

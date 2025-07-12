@@ -1,0 +1,35 @@
+{
+    "name": "Fix VS Code Git slowdown by cleaning large tracked files in PokerPy-Agency",
+    "tasks": [
+        {
+            "name": "Create or update .gitignore with best practices",
+            "run": [
+                "echo '# Git Ignore for PokerPy Project' > .gitignore",
+                "echo '*.db' >> .gitignore",
+                "echo '__pycache__/' >> .gitignore",
+                "echo '*.pyc' >> .gitignore",
+                "echo '.venv/' >> .gitignore",
+                "echo 'venv/' >> .gitignore",
+                "echo 'vector_store/' >> .gitignore",
+                "echo 'knowledge_base/' >> .gitignore",
+                "echo 'logs/' >> .gitignore",
+                "echo 'node_modules/' >> .gitignore"
+            ]
+        },
+        {
+            "name": "Untrack large directories and files from Git",
+            "run": [
+                "git rm -r --cached .",
+                "git add .",
+                "git commit -m 'Cleaned large tracked files and updated .gitignore'"
+            ]
+        },
+        {
+            "name": "Print confirmation",
+            "run": [
+                "echo '✅ .gitignore updated and heavy files removed from Git tracking.'",
+                "git status"
+            ]
+        }
+    ]
+}

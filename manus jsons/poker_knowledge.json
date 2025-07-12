@@ -1,0 +1,34 @@
+{
+    "title": "Poker Knowledge Base Enhancement",
+    "task": "web_research_and_document_packaging",
+    "objective": "Create a downloadable ZIP archive containing high-quality, publicly available PDFs and documents on advanced poker topics to enrich a knowledge base for an AI coaching agent.",
+    "requirements": {
+        "topics": [
+            "Poker theory and strategy (GTO, exploitative, pre-flop/post-flop)",
+            "Poker mathematics and probability (hand odds, pot odds, equity)",
+            "Psychology of poker (tilt, mental game, opponent profiling)",
+            "Game theory in poker (CFR, bluffing, equilibrium play)",
+            "Reinforcement learning in poker (DeepStack, Libratus, AlphaPoker)",
+            "Texas Hold'em rules and formats (cash games, tournaments)",
+            "Differences between heads-up and full-ring play",
+            "MIT OpenCourseWare or research content on poker or decision-making"
+        ],
+        "file_types": [
+            "pdf",
+            "html"
+        ],
+        "sources": [
+            ".edu",
+            ".org",
+            "research papers",
+            "training sites (where legally accessible)"
+        ],
+        "quality_filtering": true,
+        "metadata_extraction": true
+    },
+    "output": {
+        "format": "zip",
+        "contents": "all discovered documents, categorized by topic, with filenames cleaned and duplicates removed",
+        "delivery": "return downloadable ZIP link"
+    }
+}

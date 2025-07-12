@@ -1,0 +1,15 @@
+{
+  "timestamp": "20250711_110426",
+  "backup_path": "migration_backup/backup_20250711_110426",
+  "migration_version": "1.0.0",
+  "original_agents": {
+    "coach.py": {
+      "size": 29417,
+      "modified": "2025-07-11T11:04:17.468740"
+    },
+    "base_agent.py": {
+      "size": 6655,
+      "modified": "2025-07-11T11:04:17.470588"
+    }
+  }
+}

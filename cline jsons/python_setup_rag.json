@@ -1,0 +1,39 @@
+{
+  "name": "Configure Python 3.12 environment on external HD for PokerPy",
+  "tasks": [
+    {
+      "name": "Ensure Python 3.12 is installed",
+      "run": [
+        "pyenv install 3.12.3 --skip-existing",
+        "pyenv local 3.12.3",
+        "python --version"
+      ]
+    },
+    {
+      "name": "Create virtual environment inside project folder",
+      "run": [
+        "python -m venv .venv",
+        "source .venv/bin/activate"
+      ]
+    },
+    {
+      "name": "Upgrade pip and install dependencies",
+      "run": [
+        "pip install --upgrade pip",
+        "test -f requirements.txt || touch requirements.txt",
+        "pip install -r requirements.txt"
+      ]
+    },
+    {
+      "name": "Print environment details",
+      "run": [
+        "echo 'Python version:'",
+        "python --version",
+        "echo 'Virtual environment:'",
+        "which python",
+        "echo 'Installed packages:'",
+        "pip list"
+      ]
+    }
+  ]
+}

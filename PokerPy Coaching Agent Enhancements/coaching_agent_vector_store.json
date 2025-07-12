@@ -1,0 +1,78 @@
+{
+    "task": "extend_project_capabilities",
+    "project_name": "PokerPy",
+    "objective": "Implement a highly personalized, psychologically intelligent Poker Coaching Agent with retrieval-augmented generation (RAG), goal tracking, simulation scenarios, and mental performance support. The system must be grounded in Joshua's proprietary knowledge base and ready for integration into a production-grade agent stack.",
+    "requirements": {
+        "llm": {
+            "provider": "OpenAI",
+            "model": "gpt-4o",
+            "method": "RAG",
+            "embedding_model": "OpenAIEmbeddings",
+            "vector_database": "FAISS or Supabase Vector",
+            "retrieval_context": "PDFs, markdown, and structured documents about poker theory, psychology, probability, game theory, and personal development"
+        },
+        "agent_persona": {
+            "name": "Poker Coaching Agent",
+            "description": "A psychologically attuned mentor that uses poker as a lens to teach strategy, discipline, and personal growth.",
+            "capabilities": [
+                "Build psychological profiles by asking natural, open-ended questions",
+                "Track player goals (poker and life)",
+                "Reinforce player identity and confidence through encouragement and insights",
+                "Provide advice on mental health, spirituality, self-improvement",
+                "Use metaphors and real-world analogies to explain poker concepts",
+                "Offer daily motivational messages",
+                "Guide the user through habit-building based on successful players"
+            ],
+            "memory": {
+                "store": "Supabase or Redis",
+                "tracks": [
+                    "user emotional state",
+                    "player strengths and weaknesses",
+                    "preferred communication tone",
+                    "session history and performance trends"
+                ]
+            }
+        },
+        "simulation_room": {
+            "component": "Player Simulation Room",
+            "modes": [
+                "Beginner",
+                "Intermediate",
+                "Advanced"
+            ],
+            "contexts": [
+                "Cash game (varied stack sizes, bb/sb, player count, position)",
+                "Tournament (major structure types, clock, blind levels)",
+                "Custom scenarios: bluffing, equity, profiling, tilt control"
+            ],
+            "learning_loop": {
+                "feedback_cycle": true,
+                "adaptive_curriculum": true,
+                "micro_lessons": true,
+                "performance_driven_adjustment": true
+            }
+        },
+        "interfaces": {
+            "chat_ui": "React or Retool",
+            "file_structure": "/knowledge_base/",
+            "backend": "Flask or FastAPI for routing, OpenAI calls, and user memory management"
+        },
+        "extensions": [
+            "Create a goal tracker module for personal and poker objectives",
+            "Develop a habit engine that simulates behaviors of successful players",
+            "Enable 'Ask Anything' mode for advice outside of poker (mental, emotional, spiritual, learning topics)",
+            "Incorporate spaced repetition and retention checks in learning modules"
+        ]
+    },
+    "output": {
+        "format": "structured code package",
+        "includes": [
+            "code",
+            "README",
+            "API routes",
+            "example JSON configs",
+            "test cases"
+        ],
+        "delivery": "ZIP archive with modular folder structure"
+    }
+}

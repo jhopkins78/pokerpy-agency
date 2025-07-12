@@ -1,0 +1,65 @@
+Act as a market research analyst for a poker-focused AI startup. I am building a product called PokerPy — your personal AI poker coach, powered by the Harmony Engine. It analyzes your hand histories, finds your leaks, and explains your decisions in plain English — all in seconds. No charts. No jargon. Just sharp, actionable feedback you can use immediately.
+Whether you’re a beginner or an advanced grinder, PokerPy adapts to your playstyle using agent-based intelligence:
+Upload any hand history (.txt, .json, or pasted logs)
+Harmony Engine dissects your decisions: calculates EV, equity, and optimal lines
+Learns how the user plays
+Explains your mistakes like a coach would — not like a spreadsheet
+Visual reports track your leaks over time
+Trains your weakest spots with AI-generated study plans
+Interactive Insight Agent that is conversational and a poker-genius mentor
+It’s like having a GTO solver, a coach, and a performance analyst — all in one clean, simple dashboard.
+
+Conduct a complete market analysis across the following structured sections:
+
+---
+
+**Section 1: Market Landscape**
+- What are the top 10 poker apps, solvers, or coaching platforms by popularity or revenue?
+- For each, include:
+  - Core value proposition
+  - Target audience
+  - Pricing model
+  - Platform (desktop, web, mobile)
+  - Revenue estimates if available
+
+---
+
+⚖️ **Section 2: Product Differentiators**
+- What features or strengths do the most successful poker tools have in common?
+- What differentiates PokerPy from these tools?
+- What are their weaknesses (e.g., complexity, cost, poor UX, steep learning curve)?
+- What gaps exist in the current market?
+
+---
+
+**Section 3: Customer Pain Points**
+- What are the most common frustrations or challenges poker players face when trying to study or improve?
+- What do Reddit, Discord, and forums say about poker solvers, training apps, and hand review software?
+- What do beginners complain about most? What about advanced players?
+
+---
+
+**Section 4: Community Mapping**
+- Where do poker players congregate online (Reddit subs, Discord servers, forums, YouTube channels)?
+- What platforms or influencers shape opinions and trends in the poker space?
+- Which keywords, hashtags, or search trends are relevant to AI + poker?
+
+---
+
+**Section 5: GTM Strategy**
+- Based on the data above, propose a high-impact go-to-market strategy for PokerPy
+- Recommend:
+  - Launch channels (Product Hunt? YouTube?)
+  - Content strategy (memes, livestreams, breakdowns?)
+  - Positioning language (GTO vs anti-GTO?)
+  - Pricing model for freemium vs pro
+  - Influencer / affiliate strategies
+  - Paid acquisition options that don’t require massive spend
+
+---
+
+**Final Output: Strategic Insights**
+- Based on all research, summarize the top opportunities for PokerPy to own a differentiated space in this market
+- Include the top 3 "non-obvious" tactics a founder could use to go viral or build a cult-like following
+
+This is for a founder building fast — make it actionable and insight-rich.

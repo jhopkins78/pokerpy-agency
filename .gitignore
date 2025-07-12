@@ -1,0 +1,10 @@
+# Git Ignore for PokerPy Project
+*.db
+__pycache__/
+*.pyc
+.venv/
+venv/
+vector_store/
+knowledge_base/
+logs/
+node_modules/
