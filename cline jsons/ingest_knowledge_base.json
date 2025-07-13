@@ -1,0 +1,17 @@
+{
+    "name": "Ingest and vectorize PokerPy knowledge base",
+    "tasks": [
+        {
+            "name": "Activate virtual environment",
+            "run": [
+                "source .venv/bin/activate"
+            ]
+        },
+        {
+            "name": "Run ingestion script",
+            "run": [
+                "python scripts/ingest_knowledge_base.py"
+            ]
+        }
+    ]
+}

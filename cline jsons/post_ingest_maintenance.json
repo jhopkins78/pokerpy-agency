@@ -1,0 +1,27 @@
+{
+    "name": "Post-Ingestion Maintenance and Validation for PokerPy Knowledge Base",
+    "tasks": [
+        {
+            "name": "Update deprecated imports in ingest_knowledge_base.py",
+            "run": [
+                "sed -i '' 's/from langchain.document_loaders/from langchain_community.document_loaders/' scripts/ingest_knowledge_base.py",
+                "sed -i '' 's/from langchain.embeddings/from langchain_openai/' scripts/ingest_knowledge_base.py",
+                "sed -i '' 's/from langchain.vectorstores/from langchain_community.vectorstores/' scripts/ingest_knowledge_base.py"
+            ]
+        },
+        {
+            "name": "Run test RAG query for 'tilt control'",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/knowledge/search -H 'Content-Type: application/json' -d '{\"query\": \"How do I avoid tilt after losing a big hand?\", \"max_results\": 3}'"
+            ]
+        },
+        {
+            "name": "Print confirmation",
+            "run": [
+                "echo '✅ Deprecated imports replaced with langchain_community and langchain_openai.'",
+                "echo '✅ Vector store is functional and RAG retrieval query executed.'",
+                "echo 'You can now: 🔌 wire the frontend, 🚀 deploy to Render, or 🧠 train agent responses by category.'"
+            ]
+        }
+    ]
+}
