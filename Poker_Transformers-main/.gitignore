@@ -1,0 +1,24 @@
+# Ignore large or unnecessary files
+*.pdf
+*.json
+*.zip
+*.log
+
+# Virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Vector and knowledge storage (used by RAG system)
+vector_store/
+knowledge_base/
+
+# Node modules (frontend dependencies)
+node_modules/
+
+# OS and IDE clutter
+.DS_Store
+.vscode/
+data/raw/data/
+data/raw/poker_dataset.zip

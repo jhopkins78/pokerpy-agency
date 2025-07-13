@@ -1,0 +1,41 @@
+{
+    "name": "Full PokerPy API Smoke Test",
+    "tasks": [
+        {
+            "name": "Check API health",
+            "run": [
+                "curl -s http://localhost:5000/api/health"
+            ]
+        },
+        {
+            "name": "Test daily insight (RAG-backed)",
+            "run": [
+                "curl -s http://localhost:5000/api/daily-insight"
+            ]
+        },
+        {
+            "name": "Search poker knowledge base",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/knowledge/search -H 'Content-Type: application/json' -d '{\"query\": \"pot odds\", \"max_results\": 3}'"
+            ]
+        },
+        {
+            "name": "Start a coaching conversation",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/chat -H 'Content-Type: application/json' -d '{\"user_id\": \"user123\", \"message\": \"I always tilt when I lose a hand.\", \"context\": {\"emotional_state\": \"frustrated\"}}'"
+            ]
+        },
+        {
+            "name": "Create a user goal",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/goals -H 'Content-Type: application/json' -d '{\"user_id\": \"user123\", \"goal\": {\"title\": \"Improve Mental Game\", \"description\": \"Stay calm under pressure\", \"category\": \"mental\", \"target_value\": 100, \"unit\": \"percent\", \"target_date\": \"2025-12-31\"}}'"
+            ]
+        },
+        {
+            "name": "Start a simulation",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/simulation/start -H 'Content-Type: application/json' -d '{\"user_id\": \"user123\", \"scenario_type\": \"bluff_spot\", \"difficulty\": \"intermediate\"}'"
+            ]
+        }
+    ]
+}

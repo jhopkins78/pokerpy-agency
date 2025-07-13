@@ -1,0 +1,30 @@
+{
+    "name": "Optimize Git in PokerPy-Agency and ignore large files",
+    "tasks": [
+        {
+            "name": "Update .gitignore with large file patterns",
+            "run": [
+                "echo '# Ignore large and unnecessary files' >> .gitignore",
+                "echo '*.pdf' >> .gitignore",
+                "echo '*.zip' >> .gitignore",
+                "echo '__pycache__/' >> .gitignore",
+                "echo 'knowledge_base/' >> .gitignore",
+                "echo 'vector_store/' >> .gitignore"
+            ]
+        },
+        {
+            "name": "Untrack everything and re-add clean files only",
+            "run": [
+                "git rm -r --cached .",
+                "git add .",
+                "git commit -m 'Cleaned Git index and updated .gitignore to ignore PDFs, vector store, knowledge base'"
+            ]
+        },
+        {
+            "name": "Print status",
+            "run": [
+                "git status"
+            ]
+        }
+    ]
+}

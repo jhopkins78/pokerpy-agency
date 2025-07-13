@@ -8,3 +8,9 @@ vector_store/
 knowledge_base/
 logs/
 node_modules/
+# Ignore large and unnecessary files
+*.pdf
+*.zip
+__pycache__/
+knowledge_base/
+vector_store/

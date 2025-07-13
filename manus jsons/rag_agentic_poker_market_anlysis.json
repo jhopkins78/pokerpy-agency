@@ -1,0 +1,35 @@
+{
+    "analysis_request": {
+        "title": "Market Analysis: Gamified Agentic-RAG Poker Education Platform",
+        "product_name": "PokerPy",
+        "description": "PokerPy is an AI-powered poker education and analytics system built on an Agentic-RAG architecture. It functions as a smart coaching agent that delivers personalized feedback, hand analysis, strategic training, and prescriptive insights. The upgraded version introduces a gamified learning experience based on proven models (e.g., Octalysis or SAPS), designed to improve user retention and engagement. PokerPy will be deployed across web and mobile platforms.",
+        "objectives": [
+            "Estimate the revenue potential of PokerPy within the poker education and gamified learning markets.",
+            "Identify key market segments and pricing models that maximize adoption and profitability.",
+            "Assess how gamification strategies have driven success in comparable education and training industries.",
+            "Benchmark PokerPy against leading poker training tools and mobile education apps."
+        ],
+        "research_questions": [
+            "What is the current and projected market size for poker education and poker training software?",
+            "How large is the global mobile poker app market (excluding betting and real-money gambling)?",
+            "What are the primary paying user personas for poker learning tools (e.g., grinders, stables, coaches)?",
+            "What percentage of poker players actively invest in training or analytics tools?",
+            "What are typical revenue models and benchmarks for poker training platforms (e.g., Run It Once, GTO Wizard, DTO)?",
+            "How has gamification impacted user growth, retention, and monetization in similar domains like language learning (e.g., Duolingo) or fitness (e.g., Peloton)?",
+            "What are the most effective gamification elements for learning-based mobile platforms?",
+            "What is the market opportunity for hybrid deployment (web + mobile) in the poker education space?",
+            "How does PokerPy's Agentic-RAG system differentiate it from current solutions in personalization, automation, and interactivity?",
+            "What are realistic ARR and user adoption projections based on freemium and subscription models?",
+            "Who are potential strategic partners (streamers, coaches, training sites, backers) for co-marketing or integrations?"
+        ],
+        "deliverables": [
+            "Executive summary",
+            "1–3 year revenue projection models",
+            "Market segmentation breakdown",
+            "SWOT analysis",
+            "Competitor comparison matrix",
+            "Adoption curve for poker learners",
+            "Strategic go-to-market recommendations"
+        ]
+    }
+}

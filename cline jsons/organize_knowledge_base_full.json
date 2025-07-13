@@ -1,0 +1,38 @@
+{
+    "name": "Organize and flatten entire knowledge_base with category metadata",
+    "tasks": [
+        {
+            "name": "Create sources/ folder if it doesn't exist",
+            "run": [
+                "mkdir -p /Volumes/2TB/PokerPyDrive/knowledge_base/sources"
+            ]
+        },
+        {
+            "name": "Initialize metadata.json",
+            "run": [
+                "echo '{' > /Volumes/2TB/PokerPyDrive/knowledge_base/metadata.json"
+            ]
+        },
+        {
+            "name": "Extract metadata and move PDFs from nested folders",
+            "run": [
+                "cd /Volumes/2TB/PokerPyDrive/knowledge_base/poker_knowledge_collection",
+                "find . -type f -name '*.pdf' | while read filepath; do filename=$(basename \"$filepath\"); category=$(dirname \"$filepath\" | cut -d'/' -f2); echo \"  \\\"$filename\\\": { \\\"category\\\": \\\"$category\\\" },\" >> ../metadata.json; mv \"$filepath\" ../sources/; done"
+            ]
+        },
+        {
+            "name": "Clean up trailing comma and close JSON object",
+            "run": [
+                "sed -i '' '$ s/,$//' /Volumes/2TB/PokerPyDrive/knowledge_base/metadata.json",
+                "echo '}' >> /Volumes/2TB/PokerPyDrive/knowledge_base/metadata.json"
+            ]
+        },
+        {
+            "name": "Print metadata summary",
+            "run": [
+                "echo '✅ Metadata populated and PDFs flattened. Here is your metadata.json:'",
+                "cat /Volumes/2TB/PokerPyDrive/knowledge_base/metadata.json"
+            ]
+        }
+    ]
+}

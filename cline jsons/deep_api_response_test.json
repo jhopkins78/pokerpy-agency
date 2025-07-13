@@ -1,0 +1,41 @@
+{
+    "name": "Deep validation of PokerPy API endpoint responses",
+    "tasks": [
+        {
+            "name": "Health check response validation",
+            "run": [
+                "curl -s http://localhost:5000/api/health | jq 'has(\"status\") and has(\"rag_system\")'"
+            ]
+        },
+        {
+            "name": "Daily insight contains motivational text",
+            "run": [
+                "curl -s http://localhost:5000/api/daily-insight | jq 'has(\"insight\") or has(\"message\")'"
+            ]
+        },
+        {
+            "name": "Knowledge search returns documents",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/knowledge/search -H 'Content-Type: application/json' -d '{\"query\": \"pot odds\", \"max_results\": 3}' | jq '.results.documents | length > 0'"
+            ]
+        },
+        {
+            "name": "Coaching response includes advice",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/chat -H 'Content-Type: application/json' -d '{\"user_id\": \"user123\", \"message\": \"I keep tilting\", \"context\": {\"emotional_state\": \"frustrated\"}}' | jq 'has(\"response\") or has(\"advice\")'"
+            ]
+        },
+        {
+            "name": "Goal creation confirms success",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/goals -H 'Content-Type: application/json' -d '{\"user_id\": \"user123\", \"goal\": {\"title\": \"Control Tilt\", \"description\": \"Stay calm under pressure\", \"category\": \"mental\", \"target_value\": 100, \"unit\": \"percent\", \"target_date\": \"2025-12-31\"}}' | jq 'has(\"goal\") or has(\"success\")'"
+            ]
+        },
+        {
+            "name": "Simulation returns session ID",
+            "run": [
+                "curl -s -X POST http://localhost:5000/api/simulation/start -H 'Content-Type: application/json' -d '{\"user_id\": \"user123\", \"scenario_type\": \"value_bet\", \"difficulty\": \"intermediate\"}' | jq 'has(\"simulation_id\") or has(\"scenario\")'"
+            ]
+        }
+    ]
+}
