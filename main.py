@@ -1,5 +1,9 @@
 import os
 import sys
+# ENVIRONMENT VARIABLE HEALTH CHECK
+print("🔐 ENV Check | OPENAI_API_KEY:", bool(os.getenv("OPENAI_API_KEY")))
+print("🔐 ENV Check | JWT_SECRET_KEY:", bool(os.getenv("JWT_SECRET_KEY")))
+print("🔐 ENV Check | DATABASE_URL:", bool(os.getenv("DATABASE_URL")))
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
 
@@ -154,26 +158,61 @@ with app.app_context():
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Global health check endpoint"""
-    return {
-        "status": "healthy",
-        "service": "PokerPy Agentic Backend",
-        "version": "1.0.0",
-        "components": {
-            "database": "connected",
-            "agents": "initialized",
-            "websockets": "ready",
-            "authentication": "enabled",
-            "api": "ready"
-        },
-        "features": {
-            "hand_analysis": True,
-            "ai_coaching": True,
-            "learning_paths": True,
-            "community": True,
-            "real_time_chat": True,
-            "user_authentication": True
+    try:
+        return {
+            "status": "healthy",
+            "service": "PokerPy Agentic Backend",
+            "version": "1.0.0",
+            "components": {
+                "database": "connected",
+                "agents": "initialized",
+                "websockets": "ready",
+                "authentication": "enabled",
+                "api": "ready"
+            },
+            "features": {
+                "hand_analysis": True,
+                "ai_coaching": True,
+                "learning_paths": True,
+                "community": True,
+                "real_time_chat": True,
+                "user_authentication": True
+            }
         }
-    }
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+@app.route('/api/debug', methods=['GET'])
+def debug():
+    """System diagnostics and readiness check"""
+    import os
+    from flask import jsonify
+    try:
+        # Environment variable health
+        env_status = {
+            "OPENAI_API_KEY": bool(os.getenv("OPENAI_API_KEY")),
+            "JWT_SECRET_KEY": bool(os.getenv("JWT_SECRET_KEY")),
+            "DATABASE_URL": bool(os.getenv("DATABASE_URL"))
+        }
+
+        # Vector store presence
+        vector_store_exists = os.path.exists(os.path.join(os.path.dirname(__file__), "vector_store"))
+
+        # Dummy HarmonyEngine response
+        try:
+            from src.harmony_engine import HarmonyEngine
+            dummy_response = HarmonyEngine.respond("debug_user", "ping", {})
+        except Exception as he:
+            dummy_response = {"error": str(he)}
+
+        return jsonify({
+            "env_status": env_status,
+            "vector_store_exists": vector_store_exists,
+            "harmony_engine_response": dummy_response,
+            "status": "ok"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/system/stats', methods=['GET'])
 def system_stats():

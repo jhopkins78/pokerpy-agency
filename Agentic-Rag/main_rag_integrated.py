@@ -30,7 +30,7 @@ from src.routes.rag_routes import rag_bp, init_rag_routes
 from src.routes.chat_routes import chat_bp
 
 # Import enhanced agents
-from agents.coach_rag_enhanced import RAGEnhancedCoachAgent
+from src.models.coach_rag_enhanced import RAGEnhancedCoachAgent
 from src.models.orchestrator import AgentOrchestrator
 
 def create_app():

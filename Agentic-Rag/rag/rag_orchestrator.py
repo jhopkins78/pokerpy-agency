@@ -9,7 +9,7 @@ from typing import Dict, List, Any, Optional, Union
 from datetime import datetime
 from dataclasses import dataclass
 
-from agents.base_agent import BaseAgent, AgentMessage
+from src.models.base_agent import BaseAgent, AgentMessage
 from src.models.orchestrator import AgentOrchestrator
 from .knowledge_base import PokerKnowledgeBase, KnowledgeDocument
 from .vector_store import VectorStore, EmbeddingService

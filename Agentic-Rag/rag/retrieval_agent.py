@@ -11,7 +11,7 @@ from datetime import datetime
 from enum import Enum
 import asyncio
 
-from agents.base_agent import BaseAgent, AgentMessage, AgentStatus
+from src.models.base_agent import BaseAgent, AgentMessage, AgentStatus
 from .knowledge_base import PokerKnowledgeBase, KnowledgeDocument, DocumentType, SkillLevel
 from .vector_store import VectorStore, EmbeddingService
 
@@ -557,4 +557,3 @@ class RetrievalAgent(BaseAgent):
             },
             timestamp=datetime.now()
         )
-
