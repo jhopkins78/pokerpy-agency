@@ -1,4 +1,6 @@
 FROM python:3.11-slim
+ENV PYTHONPATH=${PYTHONPATH}:/app/src
+
 
 # Install build tools and system libraries
 RUN apt-get update && apt-get install -y \

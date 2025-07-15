@@ -1,16 +1,25 @@
-# Git Ignore for PokerPy Project
-*.db
+# Python Bytecode & Caches
 __pycache__/
 *.pyc
+
+# Virtual Environments
 .venv/
 venv/
+
+# Build Artifacts & Logs
+*.db
+logs/
+
+# Local Data Stores (not versioned)
 vector_store/
 knowledge_base/
-logs/
+
+# Environment Variables
+.env
+
+# Node & Frontend (if applicable)
 node_modules/
-# Ignore large and unnecessary files
+
+# Ignore large binary/source files
 *.pdf
 *.zip
-__pycache__/
-knowledge_base/
-vector_store/

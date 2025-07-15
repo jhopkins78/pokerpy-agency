@@ -10,7 +10,7 @@ from datetime import datetime
 from dataclasses import dataclass
 
 from agents.base_agent import BaseAgent, AgentMessage
-from agents.orchestrator import AgentOrchestrator
+from src.models.orchestrator import AgentOrchestrator
 from .knowledge_base import PokerKnowledgeBase, KnowledgeDocument
 from .vector_store import VectorStore, EmbeddingService
 from .retrieval_agent import RetrievalAgent, ProcessedQuery, RetrievalResult
@@ -377,4 +377,3 @@ class RAGOrchestrator:
         except Exception as e:
             self.logger.error(f"Error rebuilding knowledge index: {e}")
             return False
-

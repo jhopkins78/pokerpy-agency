@@ -31,7 +31,7 @@ from src.routes.chat_routes import chat_bp
 
 # Import enhanced agents
 from agents.coach_rag_enhanced import RAGEnhancedCoachAgent
-from agents.orchestrator import AgentOrchestrator
+from src.models.orchestrator import AgentOrchestrator
 
 def create_app():
     """Create and configure the Flask application with RAG integration"""

@@ -1,0 +1,13 @@
+{
+    "task": "Fix AgentOrchestrator import errors and patch Dockerfile",
+    "description": "Update all incorrect imports of AgentOrchestrator in the Agentic-Rag directory to import from src.models.orchestrator. Also ensure the Dockerfile appends /app/src to PYTHONPATH. Remove any self-imports like 'from agents import ...' from agents.py to avoid circular references.",
+    "strategy": "1. Replace all 'from agents.orchestrator import AgentOrchestrator' with 'from src.models.orchestrator import AgentOrchestrator'. 2. In agents.py, replace 'from agents import ...' with correct src.models.* paths. 3. Append 'ENV PYTHONPATH=${PYTHONPATH}:/app/src' to Dockerfile if not already present. 4. Validate that src.models.orchestrator.py exists and contains AgentOrchestrator.",
+    "path": "PokerPyDrive/PokerPy/PokerPy-Agency/Agentic-Rag",
+    "files": [
+        "main_rag_integrated.py",
+        "rag/rag_orchestrator.py",
+        "agents.py",
+        "../Dockerfile"
+    ],
+    "output": "All import statements corrected, Dockerfile patched with PYTHONPATH, and circular/self-imports removed. AgentOrchestrator should now resolve cleanly in all modules."
+}
