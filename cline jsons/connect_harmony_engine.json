@@ -1,0 +1,65 @@
+{
+    "name": "Inline Harmony Engine and connect to PokerPy backend",
+    "tasks": [
+        {
+            "name": "Write harmony_engine.py into src/",
+            "run": [
+                "mkdir -p src",
+                "cat > src/harmony_engine.py <<EOF",
+                "from src.rag_engine import query_knowledge_base",
+                "from src.coaching_agent import generate_coaching_response",
+                "from src.simulation_engine import suggest_simulation",
+                "from src.goal_tracker import get_active_goals",
+                "",
+                "class HarmonyEngine:",
+                "    @staticmethod",
+                "    def respond(user_id: str, message: str, context: dict) -> dict:",
+                "        intent = context.get(\"intent\", \"coaching\")",
+                "        emotion = context.get(\"emotional_state\", \"neutral\")",
+                "        category = context.get(\"category\", \"general\")",
+                "",
+                "        # Step 1: Retrieve relevant knowledge (RAG)",
+                "        rag_results = query_knowledge_base(message, category)",
+                "",
+                "        # Step 2: Generate coaching response based on knowledge + emotion",
+                "        coaching_output = generate_coaching_response(message, rag_results, emotion)",
+                "",
+                "        # Step 3: Optional simulation suggestion",
+                "        sim = suggest_simulation(message)",
+                "",
+                "        # Step 4: Fetch active goals (if any)",
+                "        goals = get_active_goals(user_id)",
+                "",
+                "        # Step 5: Return harmonized reply",
+                "        return {",
+                "            \"response\": coaching_output,",
+                "            \"sources\": rag_results,",
+                "            \"suggested_simulation\": sim,",
+                "            \"active_goals\": goals,",
+                "            \"context_used\": {",
+                "                \"intent\": intent,",
+                "                \"emotion\": emotion,",
+                "                \"category\": category",
+                "            }",
+                "        }",
+                "EOF"
+            ]
+        },
+        {
+            "name": "Wire HarmonyEngine into Flask API",
+            "run": [
+                "sed -i '' 's/from src.coaching_agent import handle_chat/from src.harmony_engine import HarmonyEngine/' src/main_rag_integrated.py",
+                "sed -i '' 's/response = handle_chat/user_id = data.get(\"user_id\", \"anon\")\\n    message = data.get(\"message\", \"\")\\n    context = data.get(\"context\", {})\\n    response = HarmonyEngine.respond(user_id, message, context)/' src/main_rag_integrated.py"
+            ]
+        },
+        {
+            "name": "Rebuild and test with Harmony integrated",
+            "run": [
+                "docker build -t pokerpy-backend .",
+                "docker run -d -p 5050:5000 --name pokerpy-harmony pokerpy-backend",
+                "sleep 5",
+                "curl -s -X POST http://localhost:5050/api/chat -H 'Content-Type: application/json' -d '{\"user_id\": \"joshua\", \"message\": \"I lost control after a bad beat.\", \"context\": {\"emotional_state\": \"frustrated\", \"category\": \"psychology_mental\"}}'"
+            ]
+        }
+    ]
+}

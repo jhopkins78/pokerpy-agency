@@ -1,0 +1,76 @@
+PokerPy Harmony Backend Integration Status Report
+Endpoint: /api/chat (POST)
+Source: src/routes/chat_routes.py:6-14, src/harmony_engine.py:6-32
+
+---
+
+**1. Expected Structure of Incoming POST Requests**
+- Content-Type: application/json
+- JSON body fields:
+  - user_id (string, optional): User identifier. Default: "anon"
+  - message (string, optional): User's message. Default: ""
+  - context (object/dict, optional): Additional context. Default: {}
+
+**2. Request Validation and Field Enforcement**
+- No strict validation or enforcement in the route or handler.
+- All fields are optional; missing fields are replaced with defaults.
+- No type enforcement beyond what is expected by the handler functions.
+- No explicit error responses for missing/invalid fields at this layer.
+
+**3. Expected Types and Default Values**
+- user_id: string (default: "anon")
+- message: string (default: "")
+- context: object/dict (default: {})
+  - context["intent"]: string (default: "coaching")
+  - context["emotional_state"]: string (default: "neutral")
+  - context["category"]: string (default: "general")
+
+**4. Backend JSON Response Format**
+- Returns a JSON object with the following structure:
+  - response (string): The generated coaching reply.
+  - sources (list): List of knowledge base sources used (type depends on query_knowledge_base output).
+  - suggested_simulation (object or null): Simulation suggestion (type depends on suggest_simulation output).
+  - active_goals (list): List of active goals for the user (type depends on get_active_goals output).
+  - context_used (object):
+    - intent (string)
+    - emotion (string)
+    - category (string)
+
+Example:
+```json
+{
+  "response": "Your coaching message here.",
+  "sources": [...],
+  "suggested_simulation": {...} or null,
+  "active_goals": [...],
+  "context_used": {
+    "intent": "coaching",
+    "emotion": "neutral",
+    "category": "general"
+  }
+}
+```
+
+**5. Error Responses and Fallback Logic**
+- If required fields are missing, defaults are used.
+- No explicit error messages for missing/invalid fields at the endpoint or handler level.
+- If the JSON body is malformed, Flask will return a 400 error.
+- Any exceptions in downstream functions (e.g., query_knowledge_base) may result in a 500 error unless handled elsewhere (not shown in this code).
+
+**6. Source File References**
+- Endpoint definition: src/routes/chat_routes.py:6-14
+- Handler logic: src/harmony_engine.py:6-32
+
+---
+
+**Frontend Integration Checklist**
+- [ ] Send POST requests to /api/chat with Content-Type: application/json.
+- [ ] Include a JSON body with at least the "message" field for meaningful responses.
+- [ ] Optionally provide "user_id" (string) to track user-specific data.
+- [ ] Optionally provide "context" (object) with:
+    - "intent" (string, e.g., "coaching")
+    - "emotional_state" (string, e.g., "neutral")
+    - "category" (string, e.g., "general")
+- [ ] Handle all fields in the backend response: "response", "sources", "suggested_simulation", "active_goals", "context_used".
+- [ ] Be prepared for default values if fields are omitted.
+- [ ] Handle possible 400 errors for malformed JSON and 500 errors for backend exceptions.

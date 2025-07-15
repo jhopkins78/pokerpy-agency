@@ -1,0 +1,35 @@
+{
+    "name": "Dockerize PokerPy backend",
+    "tasks": [
+        {
+            "name": "Create Dockerfile",
+            "run": [
+                "cat > Dockerfile <<EOF",
+                "FROM python:3.12-slim",
+                "WORKDIR /app",
+                "COPY requirements.txt ./",
+                "RUN pip install --upgrade pip && pip install -r requirements.txt",
+                "COPY . .",
+                "ENV FLASK_APP=src/main_rag_integrated.py",
+                "ENV FLASK_ENV=production",
+                "EXPOSE 5000",
+                "CMD [\"python\", \"src/main_rag_integrated.py\"]",
+                "EOF"
+            ]
+        },
+        {
+            "name": "Build Docker image",
+            "run": [
+                "docker build -t pokerpy-backend ."
+            ]
+        },
+        {
+            "name": "Test locally (optional)",
+            "run": [
+                "docker run -d -p 5000:5000 --name pokerpy-test pokerpy-backend",
+                "sleep 5",
+                "curl http://localhost:5000/health"
+            ]
+        }
+    ]
+}

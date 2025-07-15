@@ -12,6 +12,7 @@ from typing import Dict, Any, Optional
 import uuid
 
 from agents import CoachAgent, HandAnalyzerAgent, AgentMessage
+from src.harmony_engine import HarmonyEngine
 
 class ChatHandler:
     """Handles real-time chat with AI coach"""
@@ -200,49 +201,28 @@ class ChatHandler:
     def _process_coach_message(self, user_id: str, room_id: str, message: str, context: Dict[str, Any]):
         """Process message with coach agent in background"""
         try:
-            # Create message for coach agent
-            agent_message = AgentMessage(
-                id=f"chat_{datetime.now().timestamp()}",
-                sender="websocket",
-                recipient="coach",
-                message_type="answer_question",
-                content={
-                    "question": message,
-                    "user_id": user_id,
-                    "context": context,
-                    "is_live_chat": True
-                },
-                timestamp=datetime.now(),
-                requires_response=True
-            )
-            
-            # Process with coach agent
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            
-            try:
-                response = loop.run_until_complete(self.coach_agent.process_message(agent_message))
-                
-                # Stop typing indicator
-                self.socketio.emit('coach_typing', {'typing': False}, room=room_id)
-                
-                if response and response.content:
-                    # Send coach response
-                    self.socketio.emit('coach_response', {
-                        'message': response.content.get('response', 'I apologize, but I encountered an issue processing your question.'),
-                        'suggestions': response.content.get('follow_up_suggestions', []),
-                        'confidence': response.content.get('confidence', 0.8),
-                        'timestamp': datetime.now().isoformat()
-                    }, room=room_id)
-                else:
-                    self.socketio.emit('coach_response', {
-                        'message': 'I apologize, but I encountered an issue processing your question. Could you please try rephrasing it?',
-                        'timestamp': datetime.now().isoformat()
-                    }, room=room_id)
-                    
-            finally:
-                loop.close()
-                
+            # Use HarmonyEngine to generate response
+            harmony_response = HarmonyEngine.respond(user_id, message, context)
+
+            # Stop typing indicator
+            self.socketio.emit('coach_typing', {'typing': False}, room=room_id)
+
+            if harmony_response and harmony_response.get('response'):
+                # Send harmonized coach response
+                self.socketio.emit('coach_response', {
+                    'message': harmony_response.get('response', 'I apologize, but I encountered an issue processing your question.'),
+                    'sources': harmony_response.get('sources', []),
+                    'suggested_simulation': harmony_response.get('suggested_simulation'),
+                    'active_goals': harmony_response.get('active_goals'),
+                    'context_used': harmony_response.get('context_used', {}),
+                    'timestamp': datetime.now().isoformat()
+                }, room=room_id)
+            else:
+                self.socketio.emit('coach_response', {
+                    'message': 'I apologize, but I encountered an issue processing your question. Could you please try rephrasing it?',
+                    'timestamp': datetime.now().isoformat()
+                }, room=room_id)
+
         except Exception as e:
             print(f"❌ Coach message processing error: {e}")
             self.socketio.emit('coach_typing', {'typing': False}, room=room_id)
@@ -462,4 +442,3 @@ def init_websocket_handlers(socketio: SocketIO, agent_orchestrator=None, rag_orc
         chat_handler.rag_orchestrator = rag_orchestrator
     
     return chat_handler
-

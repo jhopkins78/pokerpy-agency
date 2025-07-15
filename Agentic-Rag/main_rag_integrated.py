@@ -27,6 +27,7 @@ from rag.retrieval_agent import RetrievalAgent
 from rag.rag_orchestrator import RAGOrchestrator
 from rag.knowledge_sources import KnowledgeSourceManager
 from src.routes.rag_routes import rag_bp, init_rag_routes
+from src.routes.chat_routes import chat_bp
 
 # Import enhanced agents
 from agents.coach_rag_enhanced import RAGEnhancedCoachAgent
@@ -97,6 +98,7 @@ def create_app():
     app.register_blueprint(agents_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(rag_bp)
+    app.register_blueprint(chat_bp)
     
     # Initialize WebSocket handlers
     create_websocket_handlers(socketio)
