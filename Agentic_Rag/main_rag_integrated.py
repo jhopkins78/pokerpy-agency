@@ -26,11 +26,11 @@ from rag.vector_store import VectorStore, EmbeddingService
 from rag.retrieval_agent import RetrievalAgent
 from rag.rag_orchestrator import RAGOrchestrator
 from rag.knowledge_sources import KnowledgeSourceManager
-from src.routes.rag_routes import rag_bp, init_rag_routes
+from rag_routes import rag_bp, init_rag_routes
 from src.routes.chat_routes import chat_bp
 
 # Import enhanced agents
-from src.models.coach_rag_enhanced import RAGEnhancedCoachAgent
+from Agentic_Rag.coach_rag_enhanced import RAGEnhancedCoachAgent
 from src.models.orchestrator import AgentOrchestrator
 
 def create_app():

@@ -1,9 +1,9 @@
 import os
 import sys
 # ENVIRONMENT VARIABLE HEALTH CHECK
-print("🔐 ENV Check | OPENAI_API_KEY:", bool(os.getenv("OPENAI_API_KEY")))
-print("🔐 ENV Check | JWT_SECRET_KEY:", bool(os.getenv("JWT_SECRET_KEY")))
-print("🔐 ENV Check | DATABASE_URL:", bool(os.getenv("DATABASE_URL")))
+print("ENV Check | OPENAI_API_KEY:", bool(os.getenv("OPENAI_API_KEY")))
+print("ENV Check | JWT_SECRET_KEY:", bool(os.getenv("JWT_SECRET_KEY")))
+print("ENV Check | DATABASE_URL:", bool(os.getenv("DATABASE_URL")))
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
 
