@@ -1,6 +1,5 @@
 FROM python:3.11-slim
-ENV PYTHONPATH=${PYTHONPATH}:/app/src
-
+ENV PYTHONPATH=/app:/app/src:/app/Agentic_Rag
 
 # Install build tools and system libraries
 RUN apt-get update && apt-get install -y \
@@ -25,4 +24,4 @@ ENV FLASK_ENV=production
 
 EXPOSE 5000
 
-CMD ["python", "Agentic-Rag/main_rag_integrated.py"]
+CMD ["python", "Agentic_Rag/main_rag_integrated.py"]

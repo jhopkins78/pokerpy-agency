@@ -12,7 +12,7 @@ from enum import Enum
 import asyncio
 
 from src.models.base_agent import BaseAgent, AgentMessage, AgentStatus
-from .knowledge_base import PokerKnowledgeBase, KnowledgeDocument, DocumentType, SkillLevel
+from Agentic_Rag.rag.knowledge_base import PokerKnowledgeBase, KnowledgeDocument, DocumentType, SkillLevel
 from .vector_store import VectorStore, EmbeddingService
 
 class QueryType(Enum):

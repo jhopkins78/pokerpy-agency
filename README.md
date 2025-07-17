@@ -4,34 +4,34 @@ A comprehensive poker coaching platform featuring a psychologically intelligent 
 
 ## Features
 
-### 🧠 Intelligent Coaching Agent
+### Intelligent Coaching Agent
 
 - **Psychological Profiling**: Builds detailed psychological profiles through natural conversation
 - **Adaptive Communication**: Adjusts coaching style based on user preferences and emotional state
 - **RAG-Powered Knowledge**: Retrieves relevant information from comprehensive poker knowledge base
 - **Personalized Insights**: Provides tailored advice for both poker and life improvement
 
-### 🎯 Goal Tracking System
+### Goal Tracking System
 
 - **Multi-Category Goals**: Track poker skills, mental game, financial, personal, and health goals
 - **Smart Milestones**: Automatic milestone generation with personalized rewards
 - **Progress Analytics**: Comprehensive analytics and trend tracking
 - **Habit Engine**: Simulates behaviors of successful players
 
-### 🎮 Simulation Room
+### Simulation Room
 
 - **Interactive Scenarios**: Practice common poker situations with real-time feedback
 - **Difficulty Levels**: Beginner, intermediate, and advanced scenarios
 - **Learning Objectives**: Each scenario focuses on specific skills
 - **Performance Tracking**: Detailed analysis of decision-making quality
 
-### 💭 Ask Anything Mode
+### Ask Anything Mode
 
 - **Life Coaching**: Get advice on mental health, relationships, career, and personal development
 - **Poker Metaphors**: Connect poker principles to life lessons
 - **Holistic Support**: Beyond poker - spiritual, emotional, and personal growth guidance
 
-### 📊 Memory & Analytics
+### Memory & Analytics
 
 - **Persistent Memory**: Remembers user preferences, history, and psychological insights
 - **Session Tracking**: Comprehensive poker session analysis

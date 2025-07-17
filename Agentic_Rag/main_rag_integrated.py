@@ -23,7 +23,7 @@ from src.websockets.chat_handler import create_websocket_handlers
 # Import RAG components
 from rag.knowledge_base import PokerKnowledgeBase
 from rag.vector_store import VectorStore, EmbeddingService
-from rag.retrieval_agent import RetrievalAgent
+from Agentic_Rag.rag.retrieval_agent import RetrievalAgent
 from rag.rag_orchestrator import RAGOrchestrator
 from rag.knowledge_sources import KnowledgeSourceManager
 from rag_routes import rag_bp, init_rag_routes

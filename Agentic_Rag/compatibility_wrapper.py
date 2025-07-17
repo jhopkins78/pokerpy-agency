@@ -10,7 +10,7 @@ import logging
 
 from .base_agent import BaseAgent, AgentMessage, AgentCapability
 from .coach_rag_enhanced import RAGEnhancedCoachAgent
-from ..rag.rag_orchestrator import RAGOrchestrator
+from .rag.rag_orchestrator import RAGOrchestrator
 
 logger = logging.getLogger(__name__)
 
@@ -327,4 +327,3 @@ class LegacyCoachAgent(BaseAgent):
             },
             timestamp=datetime.now()
         )
-

@@ -11,7 +11,7 @@ import logging
 from rag.rag_orchestrator import RAGOrchestrator
 from rag.knowledge_base import PokerKnowledgeBase, KnowledgeDocument, DocumentType, SkillLevel
 from rag.vector_store import VectorStore, EmbeddingService
-from rag.retrieval_agent import RetrievalAgent
+from Agentic_Rag.rag.retrieval_agent import RetrievalAgent
 from rag.knowledge_sources import KnowledgeSourceManager
 
 # Create blueprint
@@ -360,4 +360,3 @@ def rag_health():
     except Exception as e:
         logging.error(f"Error in health check: {e}")
         return jsonify({'error': str(e)}), 500
-

@@ -280,7 +280,7 @@ def serve(path):
                 </head>
                 <body>
                     <div class="container">
-                        <h1>🃏 PokerPy Agentic Backend</h1>
+                        <h1>PokerPy Agentic Backend</h1>
                         
                         <div class="status">
                             <strong>System Status:</strong> All systems operational<br>
@@ -289,7 +289,7 @@ def serve(path):
                             <strong>Authentication:</strong> JWT-based user management
                         </div>
                         
-                        <h2>🔗 API Endpoints</h2>
+                        <h2>API Endpoints</h2>
                         
                         <h3>System</h3>
                         <div class="endpoint"><span class="get">GET</span> <a href="/api/health">/api/health</a> - Health check</div>
@@ -329,7 +329,7 @@ def serve(path):
                         <h2>🏗️ Architecture</h2>
                         <p><strong>Based on Harmony Engine:</strong> Multi-agent orchestration with specialized AI agents working together to provide comprehensive poker coaching and community features.</p>
                         
-                        <p><em>🚀 Ready for frontend integration and deployment!</em></p>
+                        <p><em>Ready for frontend integration and deployment!</em></p>
                     </div>
                 </body>
             </html>
@@ -352,15 +352,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
 
-    print("🚀 Starting PokerPy Agentic Backend...")
-    print("🤖 Initializing AI agents...")
-    print("📊 Setting up database...")
-    print("🔌 Enabling WebSocket support...")
-    print("🔐 Configuring authentication...")
-    print("🌐 Enabling CORS for frontend communication...")
-    print(f"✅ Backend ready at http://0.0.0.0:{port}")
-    print(f"🔗 WebSocket endpoint: ws://0.0.0.0:{port}")
-    print("📚 API documentation available at root URL")
+    print("Starting PokerPy Agentic Backend...")
+    print("Initializing AI agents...")
+    print("Setting up database...")
+    print("Enabling WebSocket support...")
+    print("Configuring authentication...")
+    print("Enabling CORS for frontend communication...")
+    print(f"Backend ready at http://0.0.0.0:{port}")
+    print(f"WebSocket endpoint: ws://0.0.0.0:{port}")
+    print("API documentation available at root URL")
     
     # Run with SocketIO support
     socketio.run(app, host='0.0.0.0', port=port, debug=True)
