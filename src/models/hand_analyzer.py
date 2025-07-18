@@ -8,7 +8,7 @@ import re
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
-from .base_agent import BaseAgent, AgentMessage, AgentCapability
+from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
 
 class HandAnalyzerAgent(BaseAgent):
     """
@@ -426,4 +426,3 @@ class HandAnalyzerAgent(BaseAgent):
             "improvement_areas": ["hand reading", "bet sizing"],
             "confidence_score": 75.0
         }
-

@@ -8,9 +8,9 @@ from typing import Dict, Any, List, Optional, Union
 from datetime import datetime
 import logging
 
-from .base_agent import BaseAgent, AgentMessage, AgentCapability
+from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
 from .coach_rag_enhanced import RAGEnhancedCoachAgent
-from .rag.rag_orchestrator import RAGOrchestrator
+from Agentic_Rag.rag.rag_orchestrator import RAGOrchestrator
 
 logger = logging.getLogger(__name__)
 

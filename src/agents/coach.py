@@ -8,7 +8,7 @@ import random
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
-from .base_agent import BaseAgent, AgentMessage, AgentCapability
+from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
 
 class CoachAgent(BaseAgent):
     """
@@ -619,4 +619,3 @@ class CoachAgent(BaseAgent):
             weeks = num_leaks
         
         return f"{int(weeks)} weeks"
-

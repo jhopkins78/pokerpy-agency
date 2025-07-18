@@ -11,10 +11,10 @@ from typing import Dict, Any
 
 from src.models.orchestrator import AgentOrchestrator
 from src.models.hand_analyzer import HandAnalyzerAgent
-from src.models.coach import CoachAgent
+from src.agents.coach import CoachAgent
 from src.models.learning_path import LearningPathAgent
 from src.models.community import CommunityAgent
-from src.models.base_agent import AgentMessage
+from src.agents.base_agent import AgentMessage
 
 # Create blueprint
 agents_bp = Blueprint('agents', __name__)

@@ -9,9 +9,10 @@ from typing import Dict, List, Any, Optional, Union
 from datetime import datetime
 from dataclasses import dataclass
 
-from src.models.base_agent import BaseAgent, AgentMessage
+from src.agents.base_agent import BaseAgent, AgentMessage
 from src.models.orchestrator import AgentOrchestrator
-from .knowledge_base import PokerKnowledgeBase, KnowledgeDocument
+from src.models.poker_models import SkillLevel
+from .knowledge_base import DocumentType, PokerKnowledgeBase, KnowledgeDocument
 from .vector_store import VectorStore, EmbeddingService
 from .retrieval_agent import RetrievalAgent, ProcessedQuery, RetrievalResult
 

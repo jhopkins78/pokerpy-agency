@@ -8,7 +8,7 @@ import random
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
-from .base_agent import BaseAgent, AgentMessage, AgentCapability
+from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
 from rag.rag_orchestrator import RAGOrchestrator
 from rag.knowledge_base import SkillLevel, DocumentType
 
@@ -523,4 +523,3 @@ class RAGEnhancedCoachAgent(BaseAgent):
             },
             timestamp=datetime.now()
         )
-

@@ -8,11 +8,11 @@ from datetime import datetime
 import asyncio
 import logging
 
-from rag.rag_orchestrator import RAGOrchestrator
-from rag.knowledge_base import PokerKnowledgeBase, KnowledgeDocument, DocumentType, SkillLevel
-from rag.vector_store import VectorStore, EmbeddingService
+from Agentic_Rag.rag.rag_orchestrator import RAGOrchestrator
+from Agentic_Rag.rag.knowledge_base import PokerKnowledgeBase, KnowledgeDocument, DocumentType, SkillLevel
+from Agentic_Rag.rag.vector_store import VectorStore, EmbeddingService
 from Agentic_Rag.rag.retrieval_agent import RetrievalAgent
-from rag.knowledge_sources import KnowledgeSourceManager
+from Agentic_Rag.rag.knowledge_sources import KnowledgeSourceManager
 
 # Create blueprint
 rag_bp = Blueprint('rag', __name__, url_prefix='/api/rag')
@@ -40,7 +40,7 @@ def search_knowledge():
             return jsonify({'error': 'Query is required'}), 400
         
         # Create retrieval message
-        from agents.base_agent import AgentMessage
+        from src.agents.base_agent import AgentMessage
         
         retrieval_message = AgentMessage(
             id=f"search_{datetime.now().timestamp()}",

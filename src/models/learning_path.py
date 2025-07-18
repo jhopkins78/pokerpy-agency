@@ -8,7 +8,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 
-from .base_agent import BaseAgent, AgentMessage, AgentCapability
+from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
 
 @dataclass
 class LearningModule:
@@ -784,4 +784,3 @@ class LearningPathAgent(BaseAgent):
         }
         
         return skill_module_mapping.get(skill, [])
-

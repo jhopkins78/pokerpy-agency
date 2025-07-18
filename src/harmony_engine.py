@@ -2,10 +2,11 @@
 
 from Agentic_Rag.rag.knowledge_base import PokerKnowledgeBase
 from Agentic_Rag.coach_rag_enhanced import RAGEnhancedCoachAgent
-from Agentic_Rag.base_agent import AgentMessage
+from src.agents.base_agent import AgentMessage
 import asyncio
 from src.simulation_engine import suggest_simulation
 from src.goal_tracker import get_active_goals
+from datetime import datetime
 
 class HarmonyEngine:
     @staticmethod

@@ -11,9 +11,9 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 import uuid
 
-from src.models.coach import CoachAgent
+from src.agents.coach import CoachAgent
 from src.models.hand_analyzer import HandAnalyzerAgent
-from src.models.base_agent import AgentMessage
+from src.agents.base_agent import AgentMessage
 
 class ChatHandler:
     """Handles real-time chat with AI coach"""

@@ -6,10 +6,10 @@ This package implements a comprehensive RAG system that enhances the PokerPy
 agents with intelligent knowledge retrieval and contextual information processing.
 """
 
-from .rag.knowledge_base import PokerKnowledgeBase, KnowledgeDocument
-from .rag.vector_store import VectorStore, EmbeddingService
-from .rag.retrieval_agent import RetrievalAgent, QueryProcessor
-from .rag.rag_orchestrator import RAGOrchestrator
+from Agentic_Rag.rag.knowledge_base import PokerKnowledgeBase, KnowledgeDocument
+from Agentic_Rag.rag.vector_store import VectorStore, EmbeddingService
+from Agentic_Rag.rag.retrieval_agent import RetrievalAgent, QueryProcessor
+from Agentic_Rag.rag.rag_orchestrator import RAGOrchestrator
 from .rag.knowledge_sources import (
     PokerStrategySource,
     HandHistorySource, 

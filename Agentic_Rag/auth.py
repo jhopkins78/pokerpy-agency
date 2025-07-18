@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 import uuid
 import re
 
-from models.poker_models import db, User, UserReputation, SkillLevel
+from src.models.poker_models import db, User, UserReputation, SkillLevel
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -392,4 +392,3 @@ def method_not_allowed(error):
 @auth_bp.errorhandler(500)
 def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
-

@@ -21,12 +21,12 @@ from src.models.poker_models import db, User, HandAnalysis, LearningProgress, Co
 from src.websockets.chat_handler import create_websocket_handlers
 
 # Import RAG components
-from rag.knowledge_base import PokerKnowledgeBase
-from rag.vector_store import VectorStore, EmbeddingService
+from Agentic_Rag.rag.knowledge_base import PokerKnowledgeBase
+from Agentic_Rag.rag.vector_store import VectorStore, EmbeddingService
 from Agentic_Rag.rag.retrieval_agent import RetrievalAgent
-from rag.rag_orchestrator import RAGOrchestrator
-from rag.knowledge_sources import KnowledgeSourceManager
-from rag_routes import rag_bp, init_rag_routes
+from Agentic_Rag.rag.rag_orchestrator import RAGOrchestrator
+from Agentic_Rag.rag.knowledge_sources import KnowledgeSourceManager
+from Agentic_Rag.rag_routes import rag_bp, init_rag_routes
 from src.routes.chat_routes import chat_bp
 
 # Import enhanced agents

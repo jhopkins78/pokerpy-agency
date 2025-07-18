@@ -11,7 +11,9 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 import uuid
 
-from agents import CoachAgent, HandAnalyzerAgent, AgentMessage
+from src.agents.coach import CoachAgent
+from src.models.hand_analyzer import HandAnalyzerAgent
+from src.agents.base_agent import AgentMessage
 from src.harmony_engine import HarmonyEngine
 
 class ChatHandler:

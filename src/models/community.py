@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
 from enum import Enum
 
-from .base_agent import BaseAgent, AgentMessage, AgentCapability
+from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
 
 class PostType(Enum):
     HAND_SHARE = "hand_share"
@@ -788,4 +788,3 @@ class CommunityAgent(BaseAgent):
                 "Reward high-quality contributions"
             ]
         }
-

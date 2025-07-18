@@ -11,7 +11,7 @@ from datetime import datetime
 from dataclasses import asdict
 from collections import defaultdict, deque
 
-from .base_agent import BaseAgent, AgentMessage, AgentStatus
+from src.agents.base_agent import BaseAgent, AgentMessage, AgentStatus
 
 class AgentOrchestrator:
     """
@@ -250,4 +250,3 @@ class AgentOrchestrator:
         
         # Stop all agents (in a real implementation, agents would have stop methods)
         self.logger.info("All agents stopped")
-
