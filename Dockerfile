@@ -1,27 +1,29 @@
 FROM python:3.11-slim
-ENV PYTHONPATH=/app:/app/src:/app/Agentic_Rag
 
-# Install build tools and system libraries
-RUN apt-get update && apt-get install -y \
-    gcc g++ build-essential \
-    libffi-dev libssl-dev libc-dev \
-    curl libstdc++6
+# Environment flags
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Set working directory
 WORKDIR /app
 
-# Copy and install dependencies
-COPY requirements.txt ./
-RUN pip install --upgrade pip setuptools wheel
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Copy rest of the app
+# Copy all source code
 COPY . .
 
-# Set environment vars
-ENV FLASK_APP=Agentic-Rag/main_rag_integrated.py
-ENV FLASK_ENV=production
-
+# Expose default port
 EXPOSE 5000
 
+# Run using Python directly
 CMD ["python", "Agentic_Rag/main_rag_integrated.py"]
