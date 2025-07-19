@@ -38,7 +38,7 @@ class HarmonyEngine:
         coaching_output = coaching_response.content.get("response") if coaching_response else "Error: No response from coach agent."
 
         # Step 3: Optional simulation suggestion
-        sim = suggest_simulation(message)
+        sim = suggest_simulation(user_id, context)
 
         # Step 4: Fetch active goals (if any)
         goals = get_active_goals(user_id)
