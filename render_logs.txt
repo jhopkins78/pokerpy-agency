@@ -1,104 +1,150 @@
-2025-07-18T18:37:46.8416113Z #11 45.39 Successfully installed Flask-3.1.1 Flask-JWT-Extended-4.6.0 Flask-Marshmallow-0.15.0 Flask-Migrate-4.0.5 Flask-RESTful-0.3.10 Flask-SQLAlchemy-3.1.1 Jinja2-3.1.6 Mako-1.3.10 MarkupSafe-3.0.2 PyJWT-2.8.0 SQLAlchemy-2.0.41 Werkzeug-3.1.3 aiofiles-23.2.1 alembic-1.13.1 aniso8601-10.0.1 annotated-types-0.7.0 bcrypt-4.1.2 bidict-0.23.1 blinker-1.9.0 blis-1.2.1 catalogue-2.0.10 certifi-2025.7.14 charset-normalizer-3.4.2 click-8.2.1 cloudpathlib-0.21.1 confection-0.1.5 cymem-2.0.11 dnspython-2.7.0 eventlet-0.33.3 flask-cors-6.0.0 flask_socketio-5.3.6 greenlet-3.2.3 gunicorn-21.2.0 h11-0.16.0 idna-3.10 itsdangerous-2.2.0 joblib-1.5.1 langcodes-3.5.0 language-data-1.3.0 marisa-trie-1.2.1 markdown-it-py-3.0.0 marshmallow-3.20.2 marshmallow-sqlalchemy-0.29.0 mdurl-0.1.2 murmurhash-1.0.13 nltk-3.8.1 numpy-1.25.2 packaging-25.0 pandas-2.0.3 preshed-3.0.10 pydantic-2.11.7 pydantic-core-2.33.2 pygments-2.19.2 python-dateutil-2.8.2 python-decouple-3.8 python-dotenv-1.0.1 python-engineio-4.12.2 python-socketio-5.10.0 pytz-2024.1 regex-2024.11.6 requests-2.31.0 rich-14.0.0 scikit-learn-1.3.0 scipy-1.16.0 shellingham-1.5.4 simple-websocket-1.1.0 six-1.17.0 smart-open-7.3.0.post1 spacy-3.8.7 spacy-legacy-3.0.12 spacy-loggers-1.0.5 srsly-2.5.1 thinc-8.3.4 threadpoolctl-3.6.0 tqdm-4.67.1 treys-0.1.8 typer-0.16.0 typing-inspection-0.4.1 typing_extensions-4.14.0 tzdata-2025.2 urllib3-2.5.0 wasabi-1.1.3 weasel-0.4.1 wrapt-1.17.2 wsproto-1.2.0
-2025-07-18T18:37:46.841668821Z #11 45.39 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
-2025-07-18T18:37:48.044146736Z #11 DONE 46.6s
-2025-07-18T18:37:48.044176637Z 
-2025-07-18T18:37:48.044183157Z #12 [7/7] COPY . .
-2025-07-18T18:37:48.682645904Z #12 DONE 0.6s
-2025-07-18T18:37:48.682691975Z 
-2025-07-18T18:37:48.682700595Z #13 exporting to docker image format
-2025-07-18T18:37:48.682708075Z #13 exporting layers
-2025-07-18T18:38:36.764789072Z #13 exporting layers 48.2s done
-2025-07-18T18:38:36.982922043Z #13 exporting manifest sha256:7ef0367d734fea7e7e9dbce63f8b86bfd7500a38561682ad778cd119a5d7341c done
-2025-07-18T18:38:36.982961944Z #13 exporting config sha256:a79e88940b61c3dffcc236e98bf3e594bc25a9df9a739f6d2467eecd29edfd84 done
-2025-07-18T18:38:51.935272937Z #13 DONE 63.3s
-2025-07-18T18:38:51.935304728Z 
-2025-07-18T18:38:51.935310788Z #14 exporting cache to client directory
-2025-07-18T18:38:51.935316428Z #14 preparing build cache for export
-2025-07-18T18:39:04.008040769Z #14 writing cache manifest sha256:d76857bf9d0712ce3e312fbc5f5d2b03b83e657af100fbbabb45c7aabb874e8e done
-2025-07-18T18:39:04.00806879Z #14 DONE 12.2s
-2025-07-18T18:39:05.63764096Z Pushing image to registry...
-2025-07-18T18:39:20.701855325Z Upload succeeded
-2025-07-18T18:39:23.322989378Z ==> Deploying...
-2025-07-18T18:39:49.952411269Z Traceback (most recent call last):
-2025-07-18T18:39:49.952579951Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 222, in <module>
-2025-07-18T18:39:49.952800816Z     main()
-2025-07-18T18:39:49.952806677Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 196, in main
-2025-07-18T18:39:49.952892253Z     app, socketio = create_app()
-2025-07-18T18:39:49.952896773Z                     ^^^^^^^^^^^^
-2025-07-18T18:39:49.952900163Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 48, in create_app
-2025-07-18T18:39:49.953047694Z     db.init_app(app)
-2025-07-18T18:39:49.953446801Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 374, in init_app
-2025-07-18T18:39:49.953453992Z     engines[key] = self._make_engine(key, options, app)
-2025-07-18T18:39:49.953456482Z                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:49.953458942Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 665, in _make_engine
-2025-07-18T18:39:49.953539878Z     return sa.engine_from_config(options, prefix="")
-2025-07-18T18:39:49.95357441Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:49.953622923Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 823, in engine_from_config
-2025-07-18T18:39:49.953994319Z     return create_engine(url, **options)
-2025-07-18T18:39:49.95400538Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:49.95400846Z   File "<string>", line 2, in create_engine
-2025-07-18T18:39:49.954012421Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
-2025-07-18T18:39:49.954020711Z     return fn(*args, **kwargs)  # type: ignore[no-any-return]
-2025-07-18T18:39:49.954023771Z            ^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:49.954026282Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 602, in create_engine
-2025-07-18T18:39:49.95458438Z     dbapi = dbapi_meth(**dbapi_args)
-2025-07-18T18:39:49.954591101Z             ^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:49.954594431Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/psycopg2.py", line 696, in import_dbapi
-2025-07-18T18:39:49.954708879Z     import psycopg2
-2025-07-18T18:39:49.954899542Z ModuleNotFoundError: No module named 'psycopg2'
-2025-07-18T18:39:51.910870219Z ==> Exited with status 1
-2025-07-18T18:39:51.930246557Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
-2025-07-18T18:39:52.979189111Z Traceback (most recent call last):
-2025-07-18T18:39:52.979232725Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 222, in <module>
-2025-07-18T18:39:52.979236525Z     main()
-2025-07-18T18:39:52.979239665Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 196, in main
-2025-07-18T18:39:52.979251536Z     app, socketio = create_app()
-2025-07-18T18:39:52.979254196Z                     ^^^^^^^^^^^^
-2025-07-18T18:39:52.979256846Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 48, in create_app
-2025-07-18T18:39:52.979269757Z     db.init_app(app)
-2025-07-18T18:39:52.979273317Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 374, in init_app
-2025-07-18T18:39:52.979435189Z     engines[key] = self._make_engine(key, options, app)
-2025-07-18T18:39:52.979468951Z                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:52.979472631Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 665, in _make_engine
-2025-07-18T18:39:52.979635242Z     return sa.engine_from_config(options, prefix="")
-2025-07-18T18:39:52.979668925Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:52.979672515Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 823, in engine_from_config
-2025-07-18T18:39:52.979850397Z     return create_engine(url, **options)
-2025-07-18T18:39:52.97988545Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:52.97988888Z   File "<string>", line 2, in create_engine
-2025-07-18T18:39:52.97989159Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
-2025-07-18T18:39:52.980041151Z     return fn(*args, **kwargs)  # type: ignore[no-any-return]
-2025-07-18T18:39:52.980051922Z            ^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:52.980055012Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 602, in create_engine
-2025-07-18T18:39:52.980213323Z     dbapi = dbapi_meth(**dbapi_args)
-2025-07-18T18:39:52.980219823Z             ^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:39:52.980222973Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/psycopg2.py", line 696, in import_dbapi
-2025-07-18T18:39:52.980582879Z     import psycopg2
-2025-07-18T18:39:52.980589439Z ModuleNotFoundError: No module named 'psycopg2'
-2025-07-18T18:40:05.667334043Z Traceback (most recent call last):
-2025-07-18T18:40:05.667387847Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 222, in <module>
-2025-07-18T18:40:05.667414979Z     main()
-2025-07-18T18:40:05.667422969Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 196, in main
-2025-07-18T18:40:05.667526117Z     app, socketio = create_app()
-2025-07-18T18:40:05.667530507Z                     ^^^^^^^^^^^^
-2025-07-18T18:40:05.667545168Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 48, in create_app
-2025-07-18T18:40:05.667650405Z     db.init_app(app)
-2025-07-18T18:40:05.667655326Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 374, in init_app
-2025-07-18T18:40:05.667803486Z     engines[key] = self._make_engine(key, options, app)
-2025-07-18T18:40:05.667812067Z                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:40:05.667814857Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 665, in _make_engine
-2025-07-18T18:40:05.668035872Z     return sa.engine_from_config(options, prefix="")
-2025-07-18T18:40:05.668046383Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:40:05.668049813Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 823, in engine_from_config
-2025-07-18T18:40:05.668244897Z     return create_engine(url, **options)
-2025-07-18T18:40:05.668249237Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:40:05.668251927Z   File "<string>", line 2, in create_engine
-2025-07-18T18:40:05.668257838Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
-2025-07-18T18:40:05.668401448Z     return fn(*args, **kwargs)  # type: ignore[no-any-return]
-2025-07-18T18:40:05.668406398Z            ^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:40:05.668409018Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 602, in create_engine
-2025-07-18T18:40:05.668572029Z     dbapi = dbapi_meth(**dbapi_args)
-2025-07-18T18:40:05.66857618Z             ^^^^^^^^^^^^^^^^^^^^^^^^
-2025-07-18T18:40:05.66857923Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/psycopg2.py", line 696, in import_dbapi
-2025-07-18T18:40:05.668902392Z     import psycopg2
-2025-07-18T18:40:05.668906792Z ModuleNotFoundError: No module named 'psycopg2'
+2025-07-18T20:12:27.22661974Z 2025-07-18 20:12:27,223 - knowledge_base - INFO - Added document: core_003 - Position in Poker
+2025-07-18T20:12:27.22662237Z 2025-07-18 20:12:27,223 - knowledge_base - INFO - Added document: core_004 - Bankroll Management
+2025-07-18T20:12:27.22662476Z 2025-07-18 20:12:27,223 - knowledge_base - INFO - Added document: core_005 - Reading Opponents and Tells
+2025-07-18T20:12:27.22662691Z 2025-07-18 20:12:27,223 - knowledge_base - INFO - Initialized knowledge base with 5 core documents
+2025-07-18T20:12:27.22662922Z 2025-07-18 20:12:27,225 - vector_store - INFO - Initialized vector database at /tmp/vector_store.db
+2025-07-18T20:12:27.22664581Z 2025-07-18 20:12:27,226 - vector_store - INFO - Loaded 5 vectors from database
+2025-07-18T20:12:27.227027077Z 2025-07-18 20:12:27,226 - vector_store - INFO - Rebuilding vector index...
+2025-07-18T20:12:27.241828498Z 2025-07-18 20:12:27,241 - embedding_service - INFO - Fitted TF-IDF vectorizer on 5 documents
+2025-07-18T20:12:27.303555287Z 2025-07-18 20:12:27,302 - vector_store - INFO - Rebuilt vector index with 5 documents
+2025-07-18T20:12:27.303567388Z 2025-07-18 20:12:27,302 - __main__ - INFO - Initialized vector store with 5 documents
+2025-07-18T20:12:27.303570738Z 2025-07-18 20:12:27,303 - vector_store - INFO - Rebuilding vector index...
+2025-07-18T20:12:27.311860375Z 2025-07-18 20:12:27,311 - embedding_service - INFO - Fitted TF-IDF vectorizer on 5 documents
+2025-07-18T20:12:27.3448638Z 2025-07-18 20:12:27,344 - vector_store - INFO - Rebuilt vector index with 5 documents
+2025-07-18T20:12:27.344877291Z 2025-07-18 20:12:27,344 - agent.retrieval_agent - INFO - Initialized vector store with 5 documents
+2025-07-18T20:12:27.344911941Z 2025-07-18 20:12:27,344 - orchestrator - INFO - Registered agent Knowledge Retrieval Agent with capabilities: ['retrieve_knowledge', 'add_knowledge', 'update_knowledge', 'search_knowledge']
+2025-07-18T20:12:27.344947562Z 2025-07-18 20:12:27,344 - orchestrator - INFO - Defined workflow 'rag_enhanced_hand_analysis': retrieval_agent -> hand_analyzer -> coach
+2025-07-18T20:12:27.345000263Z 2025-07-18 20:12:27,344 - orchestrator - INFO - Defined workflow 'rag_enhanced_coaching': retrieval_agent -> coach
+2025-07-18T20:12:27.345028223Z 2025-07-18 20:12:27,344 - orchestrator - INFO - Defined workflow 'rag_enhanced_learning': retrieval_agent -> learning_path
+2025-07-18T20:12:27.345060524Z 2025-07-18 20:12:27,345 - orchestrator - INFO - Defined workflow 'rag_enhanced_community': retrieval_agent -> community
+2025-07-18T20:12:27.345200757Z 2025-07-18 20:12:27,345 - knowledge_source_manager - INFO - Registered knowledge source: Poker Strategy Database
+2025-07-18T20:12:27.345440921Z 2025-07-18 20:12:27,345 - knowledge_source_manager - INFO - Registered knowledge source: Hand History Database
+2025-07-18T20:12:27.345449771Z 2025-07-18 20:12:27,345 - knowledge_source_manager - INFO - Registered knowledge source: Community Content
+2025-07-18T20:12:27.345452531Z 2025-07-18 20:12:27,345 - knowledge_source_manager - INFO - Registered knowledge source: Learning Materials
+2025-07-18T20:12:27.345487662Z 2025-07-18 20:12:27,345 - orchestrator - INFO - Registered agent RAG-Enhanced AI Poker Coach with capabilities: ['coaching_request', 'explain_concept', 'analyze_hand', 'general_question', 'rag_enhanced_responses']
+2025-07-18T20:12:27.359467157Z Traceback (most recent call last):
+2025-07-18T20:12:27.359555249Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 145, in __init__
+2025-07-18T20:12:27.359727192Z     self._dbapi_connection = engine.raw_connection()
+2025-07-18T20:12:27.359904625Z                              ^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.359941096Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3297, in raw_connection
+2025-07-18T20:12:27.360422505Z     return self.pool.connect()
+2025-07-18T20:12:27.360456266Z            ^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.360460866Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+2025-07-18T20:12:27.3606882Z     return _ConnectionFairy._checkout(self)
+2025-07-18T20:12:27.36069328Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.36069698Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+2025-07-18T20:12:27.361009166Z     fairy = _ConnectionRecord.checkout(pool)
+2025-07-18T20:12:27.361014636Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.361017936Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 713, in checkout
+2025-07-18T20:12:27.36123733Z     rec = pool._do_get()
+2025-07-18T20:12:27.36124319Z           ^^^^^^^^^^^^^^
+2025-07-18T20:12:27.361246661Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+2025-07-18T20:12:27.361433564Z     with util.safe_reraise():
+2025-07-18T20:12:27.361452774Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+2025-07-18T20:12:27.361571827Z     raise exc_value.with_traceback(exc_tb)
+2025-07-18T20:12:27.36173619Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+2025-07-18T20:12:27.361842112Z     return self._create_connection()
+2025-07-18T20:12:27.361912283Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.362475464Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+2025-07-18T20:12:27.362485464Z     return _ConnectionRecord(self)
+2025-07-18T20:12:27.362488614Z            ^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.362491764Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 675, in __init__
+2025-07-18T20:12:27.362495044Z     self.__connect()
+2025-07-18T20:12:27.362497794Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 901, in __connect
+2025-07-18T20:12:27.362501134Z     with util.safe_reraise():
+2025-07-18T20:12:27.362503774Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+2025-07-18T20:12:27.362597106Z     raise exc_value.with_traceback(exc_tb)
+2025-07-18T20:12:27.362664417Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 897, in __connect
+2025-07-18T20:12:27.362893252Z     self.dbapi_connection = connection = pool._invoke_creator(self)
+2025-07-18T20:12:27.362944483Z                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.362950553Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 646, in connect
+2025-07-18T20:12:27.363156467Z     return dialect.connect(*cargs, **cparams)
+2025-07-18T20:12:27.363302Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.36330912Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 625, in connect
+2025-07-18T20:12:27.363508524Z     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+2025-07-18T20:12:27.363758618Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.363764468Z   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+2025-07-18T20:12:27.363771318Z     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+2025-07-18T20:12:27.363908001Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.363986633Z psycopg2.OperationalError: connection to server at "db.oouwsohqgsgsnougdvgh.supabase.co" (2600:1f1c:f9:4d0d:85ef:77cd:e615:40c8), port 5432 failed: Network is unreachable
+2025-07-18T20:12:27.363990333Z 	Is the server running on that host and accepting TCP/IP connections?
+2025-07-18T20:12:27.363992613Z 
+2025-07-18T20:12:27.363994643Z 
+2025-07-18T20:12:27.363996903Z The above exception was the direct cause of the following exception:
+2025-07-18T20:12:27.363999173Z 
+2025-07-18T20:12:27.364001603Z Traceback (most recent call last):
+2025-07-18T20:12:27.364007283Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 222, in <module>
+2025-07-18T20:12:27.364140185Z     main()
+2025-07-18T20:12:27.364144486Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 196, in main
+2025-07-18T20:12:27.364803218Z     app, socketio = create_app()
+2025-07-18T20:12:27.364811918Z                     ^^^^^^^^^^^^
+2025-07-18T20:12:27.364814918Z   File "/app/Agentic_Rag/main_rag_integrated.py", line 108, in create_app
+2025-07-18T20:12:27.364848739Z     db.create_all()
+2025-07-18T20:12:27.364852509Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 900, in create_all
+2025-07-18T20:12:27.364855029Z     self._call_for_binds(bind_key, "create_all")
+2025-07-18T20:12:27.364857409Z   File "/usr/local/lib/python3.11/site-packages/flask_sqlalchemy/extension.py", line 881, in _call_for_binds
+2025-07-18T20:12:27.364869899Z     getattr(metadata, op_name)(bind=engine)
+2025-07-18T20:12:27.364936331Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/sql/schema.py", line 5924, in create_all
+2025-07-18T20:12:27.366786355Z     bind._run_ddl_visitor(
+2025-07-18T20:12:27.366795656Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3247, in _run_ddl_visitor
+2025-07-18T20:12:27.36702383Z     with self.begin() as conn:
+2025-07-18T20:12:27.3670289Z   File "/usr/local/lib/python3.11/contextlib.py", line 137, in __enter__
+2025-07-18T20:12:27.367112382Z     return next(self.gen)
+2025-07-18T20:12:27.367231824Z            ^^^^^^^^^^^^^^
+2025-07-18T20:12:27.367237304Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3237, in begin
+2025-07-18T20:12:27.367825535Z     with self.connect() as conn:
+2025-07-18T20:12:27.367903977Z          ^^^^^^^^^^^^^^
+2025-07-18T20:12:27.367909167Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3273, in connect
+2025-07-18T20:12:27.368349715Z     return self._connection_cls(self)
+2025-07-18T20:12:27.368499378Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.368507838Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 147, in __init__
+2025-07-18T20:12:27.368658121Z     Connection._handle_dbapi_exception_noconnection(
+2025-07-18T20:12:27.368664031Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2436, in _handle_dbapi_exception_noconnection
+2025-07-18T20:12:27.369012828Z     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+2025-07-18T20:12:27.369018408Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 145, in __init__
+2025-07-18T20:12:27.369241192Z     self._dbapi_connection = engine.raw_connection()
+2025-07-18T20:12:27.369256153Z                              ^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.369259422Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3297, in raw_connection
+2025-07-18T20:12:27.369734622Z     return self.pool.connect()
+2025-07-18T20:12:27.369743092Z            ^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.369746152Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+2025-07-18T20:12:27.369906495Z     return _ConnectionFairy._checkout(self)
+2025-07-18T20:12:27.369996576Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.370001387Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+2025-07-18T20:12:27.370301902Z     fairy = _ConnectionRecord.checkout(pool)
+2025-07-18T20:12:27.370306932Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.370369614Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 713, in checkout
+2025-07-18T20:12:27.370623088Z     rec = pool._do_get()
+2025-07-18T20:12:27.370659979Z           ^^^^^^^^^^^^^^
+2025-07-18T20:12:27.370663179Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+2025-07-18T20:12:27.370752841Z     with util.safe_reraise():
+2025-07-18T20:12:27.370757331Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+2025-07-18T20:12:27.370802562Z     raise exc_value.with_traceback(exc_tb)
+2025-07-18T20:12:27.370931724Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+2025-07-18T20:12:27.371075807Z     return self._create_connection()
+2025-07-18T20:12:27.371080477Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.371083627Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+2025-07-18T20:12:27.371291081Z     return _ConnectionRecord(self)
+2025-07-18T20:12:27.371296161Z            ^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.371299271Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 675, in __init__
+2025-07-18T20:12:27.371495775Z     self.__connect()
+2025-07-18T20:12:27.372543425Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 901, in __connect
+2025-07-18T20:12:27.372551715Z     with util.safe_reraise():
+2025-07-18T20:12:27.372554565Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+2025-07-18T20:12:27.372559845Z     raise exc_value.with_traceback(exc_tb)
+2025-07-18T20:12:27.372562325Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 897, in __connect
+2025-07-18T20:12:27.372564965Z     self.dbapi_connection = connection = pool._invoke_creator(self)
+2025-07-18T20:12:27.372567515Z                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.372569975Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 646, in connect
+2025-07-18T20:12:27.372572875Z     return dialect.connect(*cargs, **cparams)
+2025-07-18T20:12:27.372575995Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.372578835Z   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 625, in connect
+2025-07-18T20:12:27.372581656Z     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+2025-07-18T20:12:27.372584685Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.372587345Z   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+2025-07-18T20:12:27.372609676Z     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+2025-07-18T20:12:27.372727868Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-07-18T20:12:27.372733298Z sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "db.oouwsohqgsgsnougdvgh.supabase.co" (2600:1f1c:f9:4d0d:85ef:77cd:e615:40c8), port 5432 failed: Network is unreachable
+2025-07-18T20:12:27.372736058Z 	Is the server running on that host and accepting TCP/IP connections?
+2025-07-18T20:12:27.372738118Z 
+2025-07-18T20:12:27.372740648Z (Background on this error at: https://sqlalche.me/e/20/e3q8)

@@ -218,5 +218,9 @@ def main():
         allow_unsafe_werkzeug=True
     )
 
+@app.route("/api/health", methods=["GET"])
+def health_check():
+    return {"status": "ok"}, 200
+
 if __name__ == '__main__':
     main()
