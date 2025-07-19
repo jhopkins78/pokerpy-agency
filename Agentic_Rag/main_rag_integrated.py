@@ -37,6 +37,10 @@ def create_app():
     """Create and configure the Flask application with RAG integration"""
     app = Flask(__name__)
     
+    @app.route("/api/health", methods=["GET"])
+    def health_check():
+        return {"status": "ok"}, 200
+
     # Configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///pokerpy.db')
@@ -203,7 +207,7 @@ def main():
     print(f"Starting PokerPy RAG-Enhanced Backend on {host}:{port}")
     print(f"Debug mode: {debug}")
     print("Available endpoints:")
-    print("  - Health check: /health")
+    print("  - Health check: /api/health")
     print("  - Agents API: /api/agents")
     print("  - Authentication: /api/auth")
     print("  - RAG System: /api/rag")
@@ -217,10 +221,6 @@ def main():
         debug=debug,
         allow_unsafe_werkzeug=True
     )
-
-@app.route("/api/health", methods=["GET"])
-def health_check():
-    return {"status": "ok"}, 200
-
+    print("PokerPy RAG-Enhanced Backend is running...")
 if __name__ == '__main__':
     main()
