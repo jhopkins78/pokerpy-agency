@@ -42,6 +42,9 @@ class HarmonyEngine:
 
         # Step 4: Fetch active goals (if any)
         goals = get_active_goals(user_id)
+        # Convert list of goal objects to list of strings if needed
+        if goals and isinstance(goals[0], dict) and "goal" in goals[0]:
+            goals = [g["goal"] for g in goals]
 
         # Step 5: Return harmonized reply
         return {
