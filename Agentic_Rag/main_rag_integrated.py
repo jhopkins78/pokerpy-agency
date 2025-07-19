@@ -37,10 +37,6 @@ def create_app():
     """Create and configure the Flask application with RAG integration"""
     app = Flask(__name__)
     
-    @app.route("/api/health", methods=["GET"])
-    def health_check():
-        return {"status": "ok"}, 200
-
     # Configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///pokerpy.db')
@@ -111,15 +107,19 @@ def create_app():
     with app.app_context():
         db.create_all()
         logger.info("Database tables created")
+        
+        # Initialize knowledge base with content from sources
+        knowledge_source_manager.initialize_sources()
+        logger.info("Knowledge sources initialized")
     
     # Health check endpoint
-    @app.route('/health')
-    def health_check():
+    @app.route("/api/health", methods=["GET"])
+    def api_health_check():
         """Health check endpoint"""
         try:
             # Check database connection
             db.session.execute('SELECT 1')
-            
+
             # Check RAG system
             rag_health = {
                 'knowledge_base_documents': len(knowledge_base.documents),
@@ -127,7 +127,7 @@ def create_app():
                 'registered_agents': len(agent_orchestrator.agents),
                 'knowledge_sources': len(knowledge_source_manager.sources)
             }
-            
+
             return jsonify({
                 'status': 'healthy',
                 'timestamp': datetime.now().isoformat(),
@@ -142,7 +142,7 @@ def create_app():
                 'error': str(e),
                 'timestamp': datetime.now().isoformat()
             }), 500
-    
+
     # Root endpoint
     @app.route('/')
     def index():
