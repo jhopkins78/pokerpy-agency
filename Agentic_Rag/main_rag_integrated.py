@@ -108,8 +108,7 @@ def create_app():
         db.create_all()
         logger.info("Database tables created")
         
-        # Initialize knowledge base with content from sources
-        knowledge_source_manager.initialize_sources()
+        # Initialize knowledge base with existing documents
         logger.info("Knowledge sources initialized")
     
     # Health check endpoint
