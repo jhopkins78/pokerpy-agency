@@ -33,6 +33,8 @@ from src.routes.chat_routes import chat_bp
 from Agentic_Rag.coach_rag_enhanced import RAGEnhancedCoachAgent
 from src.models.orchestrator import AgentOrchestrator
 
+from sqlalchemy import text
+
 def create_app():
     """Create and configure the Flask application with RAG integration"""
     app = Flask(__name__)
@@ -117,7 +119,7 @@ def create_app():
         """Health check endpoint"""
         try:
             # Check database connection
-            db.session.execute('SELECT 1')
+            db.session.execute(text('SELECT 1'))
 
             # Check RAG system
             rag_health = {
