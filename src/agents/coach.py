@@ -1,6 +1,6 @@
 """
-Coach Agent for PokerPy
-Provides conversational AI coaching and translates technical analysis into plain English
+RAG-Enhanced Coach Agent for PokerPy
+Provides conversational AI coaching enhanced with knowledge retrieval
 """
 
 import json
@@ -9,613 +9,517 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 
 from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
+from Agentic_Rag.rag.rag_orchestrator import RAGOrchestrator
+from Agentic_Rag.rag.knowledge_base import SkillLevel, DocumentType
 
 class CoachAgent(BaseAgent):
     """
-    Conversational AI coach that provides personalized poker coaching
-    Translates technical analysis into beginner-friendly explanations
+    Conversational AI coach enhanced with RAG capabilities
+    Provides personalized coaching with knowledge-backed responses
     """
     
-    def __init__(self):
+    def __init__(self, rag_orchestrator: RAGOrchestrator = None):
         super().__init__(
-            agent_id="coach",
-            name="AI Poker Coach",
-            description="Provides conversational AI coaching and plain English explanations"
+            agent_id="rag_coach",
+            name="RAG-Enhanced AI Poker Coach", 
+            description="Provides conversational AI coaching enhanced with knowledge retrieval"
         )
+        
+        self.rag_orchestrator = rag_orchestrator
         
         # Coaching personality and style
         self.coaching_style = "encouraging"  # encouraging, direct, analytical
         self.user_skill_levels = {}  # user_id -> skill_level
         self.conversation_history = {}  # user_id -> conversation_history
         
-        # Response templates for different scenarios
+        # Enhanced response templates with RAG integration
         self.response_templates = {
             "hand_analysis": {
                 "beginner": [
-                    "Let me break this down in simple terms...",
-                    "Here's what happened in your hand...",
-                    "Don't worry, this is a common spot. Here's how to think about it..."
+                    "Let me break this down in simple terms using some proven strategies...",
+                    "Here's what happened in your hand, backed by poker fundamentals...",
+                    "Don't worry, this is a common spot. Based on established poker theory..."
                 ],
                 "intermediate": [
-                    "Looking at this hand, there are a few key concepts to consider...",
-                    "This is a great learning opportunity. Let's analyze...",
-                    "You're on the right track, but here's how to improve..."
+                    "Looking at this hand, there are key concepts from poker strategy to consider...",
+                    "This is a great learning opportunity. Let me reference some strategic principles...",
+                    "You're on the right track, but here's how experts approach this..."
                 ],
                 "advanced": [
-                    "This hand presents some interesting strategic considerations...",
-                    "Let's dive into the theory behind this decision...",
-                    "From a GTO perspective, while considering exploitative adjustments..."
+                    "This hand presents interesting strategic considerations. Let me reference advanced theory...",
+                    "Based on current poker research and GTO principles...",
+                    "From both theoretical and practical perspectives, considering recent strategic developments..."
+                ]
+            },
+            "concept_explanation": {
+                "beginner": [
+                    "This concept is fundamental to poker success. Let me explain it simply...",
+                    "Here's a beginner-friendly explanation of this important idea...",
+                    "This might seem complex, but it's actually quite straightforward..."
+                ],
+                "intermediate": [
+                    "You're ready for a deeper understanding of this concept...",
+                    "Building on what you already know, here's the next level...",
+                    "This concept connects to several other strategic principles..."
+                ],
+                "advanced": [
+                    "This concept has some nuanced applications in advanced play...",
+                    "The theoretical foundation of this concept involves...",
+                    "Recent developments in poker theory have refined our understanding..."
                 ]
             },
             "encouragement": [
-                "You're making great progress!",
-                "That's exactly the right way to think about it!",
-                "I can see your game improving already!",
-                "Don't get discouraged - even pros make these mistakes!",
-                "You're asking all the right questions!"
-            ],
-            "mistake_explanation": [
-                "No worries - this is actually a really common mistake.",
-                "I see why you made that play, but here's a better approach...",
-                "This is a great learning moment. Here's what to do instead...",
-                "Don't beat yourself up about this - let's turn it into a lesson!"
+                "You're making great progress! Keep up the good work.",
+                "Every hand is a learning opportunity, and you're learning fast!",
+                "Poker is a journey, and you're on the right path.",
+                "Your understanding is improving with each session!"
             ]
         }
         
-        # Common poker concepts in plain English
-        self.plain_english_concepts = {
-            "equity": "your chances of winning the hand",
-            "pot_odds": "the price you're getting to call",
-            "implied_odds": "potential future winnings if you hit your hand",
-            "reverse_implied_odds": "potential future losses if you make a weak hand",
-            "position": "where you sit relative to the dealer button",
-            "range": "all the possible hands someone could have",
-            "polarized": "having either very strong or very weak hands",
-            "merged": "having a mix of strong and medium-strength hands",
-            "c_bet": "betting after you raised before the flop",
-            "float": "calling with a weak hand planning to bluff later",
-            "barrel": "betting again on the next street",
-            "value_bet": "betting because you think you have the best hand",
-            "bluff": "betting with a weak hand to make opponents fold better hands"
+        # Knowledge integration settings
+        self.knowledge_integration = {
+            'always_enhance': True,
+            'min_confidence_threshold': 0.3,
+            'max_knowledge_sources': 2,
+            'prefer_skill_appropriate': True
         }
     
+    async def process_message(self, message: AgentMessage) -> Optional[AgentMessage]:
+        """Process coaching requests with RAG enhancement"""
+        try:
+            if message.message_type == "coaching_request":
+                return await self._handle_coaching_request(message)
+            elif message.message_type == "explain_concept":
+                return await self._handle_concept_explanation(message)
+            elif message.message_type == "analyze_hand":
+                return await self._handle_hand_analysis_coaching(message)
+            elif message.message_type == "general_question":
+                return await self._handle_general_question(message)
+            else:
+                return await self._handle_unknown_request(message)
+        
+        except Exception as e:
+            self.logger.error(f"Error processing coaching message: {e}")
+            return self._create_error_response(message, "I'm having trouble processing your request. Please try again.")
+    
+    async def _handle_coaching_request(self, message: AgentMessage) -> AgentMessage:
+        """Handle general coaching requests with RAG enhancement"""
+        try:
+            content = message.content
+            user_id = content.get('user_id', 'anonymous')
+            query = content.get('query', '')
+            context = content.get('context', {})
+            
+            # Determine user skill level
+            skill_level = self._get_user_skill_level(user_id, context)
+            
+            # Generate base response
+            base_response = await self._generate_base_coaching_response(query, skill_level, context)
+            
+            # Enhance with RAG if available
+            if self.rag_orchestrator and self.knowledge_integration['always_enhance']:
+                enhanced_response = await self.rag_orchestrator.enhance_agent_response(
+                    agent_id=self.agent_id,
+                    original_query=query,
+                    agent_response=base_response,
+                    context={
+                        'skill_level': skill_level.value,
+                        'user_id': user_id,
+                        'coaching_context': True
+                    }
+                )
+                
+                final_response = enhanced_response.enhanced_response
+                sources = enhanced_response.sources
+                confidence = enhanced_response.confidence_score
+            else:
+                final_response = base_response
+                sources = []
+                confidence = 0.7
+            
+            # Update conversation history
+            self._update_conversation_history(user_id, query, final_response)
+            
+            # Prepare response
+            response_content = {
+                'response': final_response,
+                'coaching_style': self.coaching_style,
+                'skill_level': skill_level.value,
+                'confidence': confidence,
+                'sources': sources,
+                'follow_up_suggestions': self._generate_follow_up_suggestions(query, skill_level),
+                'success': True
+            }
+            
+            return self._create_response(message, response_content)
+        
+        except Exception as e:
+            self.logger.error(f"Error in coaching request: {e}")
+            return self._create_error_response(message, "I'm having trouble with your coaching request.")
+    
+    async def _handle_concept_explanation(self, message: AgentMessage) -> AgentMessage:
+        """Handle concept explanation requests with knowledge retrieval"""
+        try:
+            content = message.content
+            concept = content.get('concept', '')
+            user_id = content.get('user_id', 'anonymous')
+            context = content.get('context', {})
+            
+            skill_level = self._get_user_skill_level(user_id, context)
+            
+            # Generate explanation using RAG
+            if self.rag_orchestrator:
+                # First retrieve relevant knowledge about the concept
+                retrieval_message = AgentMessage(
+                    id=f"concept_retrieval_{datetime.now().timestamp()}",
+                    sender=self.agent_id,
+                    recipient="retrieval_agent",
+                    message_type="retrieve_knowledge",
+                    content={
+                        'query': f"explain {concept} poker concept",
+                        'context': {
+                            'skill_level': skill_level.value,
+                            'document_types': ['concept', 'strategy', 'tutorial']
+                        },
+                        'max_results': 3
+                    },
+                    timestamp=datetime.now()
+                )
+                
+                # Get knowledge-based explanation
+                base_explanation = await self._generate_concept_explanation(concept, skill_level)
+                
+                # Enhance with retrieved knowledge
+                enhanced_response = await self.rag_orchestrator.enhance_agent_response(
+                    agent_id=self.agent_id,
+                    original_query=f"explain {concept}",
+                    agent_response=base_explanation,
+                    context={'skill_level': skill_level.value, 'concept_explanation': True}
+                )
+                
+                final_explanation = enhanced_response.enhanced_response
+                sources = enhanced_response.sources
+                confidence = enhanced_response.confidence_score
+            else:
+                final_explanation = await self._generate_concept_explanation(concept, skill_level)
+                sources = []
+                confidence = 0.6
+            
+            response_content = {
+                'concept': concept,
+                'explanation': final_explanation,
+                'skill_level': skill_level.value,
+                'confidence': confidence,
+                'sources': sources,
+                'related_concepts': self._get_related_concepts(concept),
+                'practice_suggestions': self._get_practice_suggestions(concept, skill_level),
+                'success': True
+            }
+            
+            return self._create_response(message, response_content)
+        
+        except Exception as e:
+            self.logger.error(f"Error explaining concept: {e}")
+            return self._create_error_response(message, f"I'm having trouble explaining {concept}.")
+    
+    async def _handle_hand_analysis_coaching(self, message: AgentMessage) -> AgentMessage:
+        """Handle hand analysis with coaching perspective"""
+        try:
+            content = message.content
+            hand_analysis = content.get('hand_analysis', {})
+            user_id = content.get('user_id', 'anonymous')
+            
+            skill_level = self._get_user_skill_level(user_id, content.get('context', {}))
+            
+            # Generate coaching response based on hand analysis
+            coaching_response = await self._generate_hand_coaching(hand_analysis, skill_level)
+            
+            # Enhance with strategic knowledge if available
+            if self.rag_orchestrator:
+                # Create query based on hand situation
+                situation_query = self._extract_situation_query(hand_analysis)
+                
+                enhanced_response = await self.rag_orchestrator.enhance_agent_response(
+                    agent_id=self.agent_id,
+                    original_query=situation_query,
+                    agent_response=coaching_response,
+                    context={
+                        'skill_level': skill_level.value,
+                        'hand_analysis': True,
+                        'situation': hand_analysis.get('situation', {})
+                    }
+                )
+                
+                final_response = enhanced_response.enhanced_response
+                sources = enhanced_response.sources
+                confidence = enhanced_response.confidence_score
+            else:
+                final_response = coaching_response
+                sources = []
+                confidence = 0.7
+            
+            response_content = {
+                'coaching_response': final_response,
+                'key_learning_points': self._extract_learning_points(hand_analysis, skill_level),
+                'improvement_suggestions': self._generate_improvement_suggestions(hand_analysis, skill_level),
+                'confidence': confidence,
+                'sources': sources,
+                'success': True
+            }
+            
+            return self._create_response(message, response_content)
+        
+        except Exception as e:
+            self.logger.error(f"Error in hand analysis coaching: {e}")
+            return self._create_error_response(message, "I'm having trouble analyzing this hand.")
+    
+    async def _generate_base_coaching_response(self, query: str, skill_level: SkillLevel, context: Dict[str, Any]) -> str:
+        """Generate base coaching response before RAG enhancement"""
+        # Select appropriate template
+        templates = self.response_templates.get("hand_analysis", {}).get(skill_level.value, [])
+        if templates:
+            intro = random.choice(templates)
+        else:
+            intro = "Let me help you with that..."
+        
+        # Generate response based on query type and skill level
+        if "position" in query.lower():
+            response = f"{intro} Position is crucial in poker. "
+            if skill_level == SkillLevel.BEGINNER:
+                response += "Think of it like this: the later you act, the more information you have about what other players are doing."
+            else:
+                response += "Your position determines your range construction and post-flop playability considerations."
+        
+        elif "pot odds" in query.lower():
+            response = f"{intro} Pot odds help you make profitable decisions. "
+            if skill_level == SkillLevel.BEGINNER:
+                response += "Simply put, if you need to call $10 to win a $50 pot, you need to win more than 1 in 6 times to profit."
+            else:
+                response += "Calculate the ratio of the current pot size to the cost of your call, then compare to your equity."
+        
+        else:
+            # Generic response
+            response = f"{intro} This is a great question that many players struggle with. Let me break it down for you."
+        
+        return response
+    
+    async def _generate_concept_explanation(self, concept: str, skill_level: SkillLevel) -> str:
+        """Generate concept explanation appropriate for skill level"""
+        concept_lower = concept.lower()
+        
+        if concept_lower in ["pot odds", "odds"]:
+            if skill_level == SkillLevel.BEGINNER:
+                return "Pot odds are like a simple math problem that helps you decide whether to call a bet. If someone bets $10 into a $30 pot, you need to call $10 to win $40 total. That means you need to win at least 1 out of every 4 times (25%) to break even."
+            else:
+                return "Pot odds represent the ratio between the current pot size and the cost of a call. They're essential for determining the minimum equity required for a profitable call. The formula is: Required Equity = Call Amount / (Pot + Call Amount)."
+        
+        elif concept_lower in ["position"]:
+            if skill_level == SkillLevel.BEGINNER:
+                return "Position in poker is where you sit relative to the dealer button. Being 'in position' means you act after your opponents, giving you more information to make better decisions. It's like having the last word in a conversation."
+            else:
+                return "Position is arguably the most important factor in poker strategy. Late position allows for wider opening ranges, more profitable bluffs, better pot control, and superior information gathering. It directly impacts your expected value in every hand."
+        
+        else:
+            return f"The concept of {concept} is an important part of poker strategy. Let me explain how it works and why it matters for your game."
+    
+    def _get_user_skill_level(self, user_id: str, context: Dict[str, Any]) -> SkillLevel:
+        """Determine user skill level from context or history"""
+        # Check context first
+        if 'skill_level' in context:
+            try:
+                return SkillLevel(context['skill_level'])
+            except ValueError:
+                pass
+        
+        # Check stored user data
+        if user_id in self.user_skill_levels:
+            return self.user_skill_levels[user_id]
+        
+        # Default to beginner
+        return SkillLevel.BEGINNER
+    
+    def _update_conversation_history(self, user_id: str, query: str, response: str):
+        """Update conversation history for personalization"""
+        if user_id not in self.conversation_history:
+            self.conversation_history[user_id] = []
+        
+        self.conversation_history[user_id].append({
+            'timestamp': datetime.now().isoformat(),
+            'query': query,
+            'response': response
+        })
+        
+        # Keep only last 10 interactions
+        if len(self.conversation_history[user_id]) > 10:
+            self.conversation_history[user_id] = self.conversation_history[user_id][-10:]
+    
+    def _generate_follow_up_suggestions(self, query: str, skill_level: SkillLevel) -> List[str]:
+        """Generate follow-up suggestions based on the query"""
+        suggestions = []
+        
+        if "position" in query.lower():
+            suggestions = [
+                "Would you like to practice position-based hand selection?",
+                "Should we discuss how position affects post-flop play?",
+                "Want to learn about positional betting strategies?"
+            ]
+        elif "pot odds" in query.lower():
+            suggestions = [
+                "Would you like to practice calculating pot odds?",
+                "Should we discuss implied odds next?",
+                "Want to learn about equity calculations?"
+            ]
+        else:
+            suggestions = [
+                "Would you like to explore this topic further?",
+                "Should we look at some practical examples?",
+                "Want to discuss related concepts?"
+            ]
+        
+        return suggestions[:2]  # Return top 2 suggestions
+    
+    def _get_related_concepts(self, concept: str) -> List[str]:
+        """Get related concepts for cross-learning"""
+        concept_map = {
+            "pot odds": ["equity", "implied odds", "expected value"],
+            "position": ["range construction", "post-flop play", "betting patterns"],
+            "equity": ["pot odds", "expected value", "hand strength"],
+            "bluffing": ["value betting", "range balancing", "opponent reads"]
+        }
+        
+        return concept_map.get(concept.lower(), [])
+    
+    def _get_practice_suggestions(self, concept: str, skill_level: SkillLevel) -> List[str]:
+        """Get practice suggestions for the concept"""
+        if concept.lower() == "pot odds":
+            if skill_level == SkillLevel.BEGINNER:
+                return [
+                    "Practice with simple pot odds scenarios",
+                    "Use the 4-2 rule for quick equity estimation",
+                    "Start with obvious calling/folding spots"
+                ]
+            else:
+                return [
+                    "Practice complex multi-way pot odds calculations",
+                    "Include implied odds in your analysis",
+                    "Work on real-time calculation speed"
+                ]
+        
+        return ["Practice this concept in low-stakes games", "Review hand histories focusing on this concept"]
+    
+    async def _generate_hand_coaching(self, hand_analysis: Dict[str, Any], skill_level: SkillLevel) -> str:
+        """Generate coaching response for hand analysis"""
+        # Extract key information from hand analysis
+        action = hand_analysis.get('recommended_action', 'unknown')
+        reasoning = hand_analysis.get('reasoning', '')
+        
+        # Generate coaching response
+        if skill_level == SkillLevel.BEGINNER:
+            response = f"Looking at this hand, the recommended play is to {action}. Here's why in simple terms: {reasoning}"
+        else:
+            response = f"The optimal play here is to {action}. The strategic reasoning involves: {reasoning}"
+        
+        return response
+    
+    def _extract_learning_points(self, hand_analysis: Dict[str, Any], skill_level: SkillLevel) -> List[str]:
+        """Extract key learning points from hand analysis"""
+        points = []
+        
+        if 'position' in hand_analysis:
+            points.append(f"Position consideration: {hand_analysis['position']}")
+        
+        if 'pot_odds' in hand_analysis:
+            points.append(f"Pot odds analysis: {hand_analysis['pot_odds']}")
+        
+        if not points:
+            points.append("Focus on fundamental decision-making process")
+        
+        return points
+    
+    def _generate_improvement_suggestions(self, hand_analysis: Dict[str, Any], skill_level: SkillLevel) -> List[str]:
+        """Generate specific improvement suggestions"""
+        suggestions = []
+        
+        if skill_level == SkillLevel.BEGINNER:
+            suggestions = [
+                "Focus on position awareness in similar spots",
+                "Practice pot odds calculations",
+                "Review basic hand strength concepts"
+            ]
+        else:
+            suggestions = [
+                "Consider range construction in this position",
+                "Analyze opponent tendencies more deeply",
+                "Explore GTO vs exploitative considerations"
+            ]
+        
+        return suggestions
+    
+    def _extract_situation_query(self, hand_analysis: Dict[str, Any]) -> str:
+        """Extract a query string from hand analysis for knowledge retrieval"""
+        situation = hand_analysis.get('situation', {})
+        position = situation.get('position', '')
+        action = situation.get('action', '')
+        
+        return f"{position} {action} poker strategy"
+    
     def get_capabilities(self) -> List[AgentCapability]:
+        """Return enhanced agent capabilities"""
         return [
             AgentCapability(
-                name="explain_analysis",
-                description="Convert technical poker analysis into plain English explanations",
-                input_schema={
-                    "type": "object",
-                    "properties": {
-                        "technical_analysis": {"type": "object"},
-                        "user_id": {"type": "string"},
-                        "skill_level": {"type": "string", "enum": ["beginner", "intermediate", "advanced"]},
-                        "explanation_style": {"type": "string", "enum": ["simple", "detailed", "conversational"]}
-                    },
-                    "required": ["technical_analysis", "user_id"]
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "plain_english_explanation": {"type": "string"},
-                        "key_takeaways": {"type": "array"},
-                        "next_steps": {"type": "array"},
-                        "follow_up_questions": {"type": "array"}
-                    }
-                }
+                name="coaching_request", 
+                description="Provide personalized poker coaching",
+                input_schema={"query": "str", "user_id": "str", "context": "dict"},
+                output_schema={"response": "str", "confidence": "float", "sources": "list"}
             ),
             AgentCapability(
-                name="answer_question",
-                description="Answer poker-related questions in a conversational manner",
-                input_schema={
-                    "type": "object",
-                    "properties": {
-                        "question": {"type": "string"},
-                        "user_id": {"type": "string"},
-                        "context": {"type": "object"}
-                    },
-                    "required": ["question", "user_id"]
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "answer": {"type": "string"},
-                        "examples": {"type": "array"},
-                        "related_concepts": {"type": "array"}
-                    }
-                }
+                name="explain_concept", 
+                description="Explain poker concepts with knowledge backing",
+                input_schema={"concept": "str", "user_id": "str", "context": "dict"},
+                output_schema={"explanation": "str", "related_concepts": "list", "sources": "list"}
             ),
             AgentCapability(
-                name="provide_encouragement",
-                description="Provide motivational coaching and encouragement",
-                input_schema={
-                    "type": "object",
-                    "properties": {
-                        "user_id": {"type": "string"},
-                        "situation": {"type": "string"},
-                        "progress_data": {"type": "object"}
-                    },
-                    "required": ["user_id", "situation"]
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "encouragement_message": {"type": "string"},
-                        "progress_highlights": {"type": "array"},
-                        "motivation": {"type": "string"}
-                    }
-                }
+                name="analyze_hand", 
+                description="Provide coaching perspective on hand analysis",
+                input_schema={"hand_analysis": "dict", "user_id": "str"},
+                output_schema={"coaching_response": "str", "learning_points": "list", "sources": "list"}
             ),
             AgentCapability(
-                name="create_learning_plan",
-                description="Create personalized learning plans based on identified weaknesses",
-                input_schema={
-                    "type": "object",
-                    "properties": {
-                        "user_id": {"type": "string"},
-                        "identified_leaks": {"type": "array"},
-                        "skill_level": {"type": "string"},
-                        "time_commitment": {"type": "string"}
-                    },
-                    "required": ["user_id", "identified_leaks"]
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "learning_plan": {"type": "object"},
-                        "weekly_goals": {"type": "array"},
-                        "practice_exercises": {"type": "array"}
-                    }
-                }
+                name="general_question", 
+                description="Answer general poker questions",
+                input_schema={"question": "str", "context": "dict"},
+                output_schema={"answer": "str", "confidence": "float", "sources": "list"}
+            ),
+            AgentCapability(
+                name="rag_enhanced_responses", 
+                description="Enhanced responses with knowledge retrieval",
+                input_schema={"query": "str", "context": "dict"},
+                output_schema={"enhanced_response": "str", "sources": "list", "confidence": "float"}
             )
         ]
     
-    async def process_message(self, message: AgentMessage) -> Optional[AgentMessage]:
-        """Process coaching requests and provide personalized responses"""
-        try:
-            message_type = message.message_type
-            content = message.content
-            
-            if message_type == "explain_analysis":
-                result = await self._explain_analysis(content)
-            elif message_type == "answer_question":
-                result = await self._answer_question(content)
-            elif message_type == "provide_encouragement":
-                result = await self._provide_encouragement(content)
-            elif message_type == "create_learning_plan":
-                result = await self._create_learning_plan(content)
-            else:
-                result = {"error": f"Unknown message type: {message_type}"}
-            
-            return AgentMessage(
-                id=f"response_{message.id}",
-                sender=self.agent_id,
-                recipient=message.sender,
-                message_type=f"response_{message_type}",
-                content=result,
-                timestamp=datetime.now()
-            )
-            
-        except Exception as e:
-            self.logger.error(f"Error processing coaching message: {e}")
-            return AgentMessage(
-                id=f"error_{message.id}",
-                sender=self.agent_id,
-                recipient=message.sender,
-                message_type="error",
-                content={"error": str(e)},
-                timestamp=datetime.now()
-            )
+    def _create_response(self, original_message: AgentMessage, content: Any) -> AgentMessage:
+        """Create response message"""
+        return AgentMessage(
+            id=f"coach_response_{original_message.id}",
+            sender=self.agent_id,
+            recipient=original_message.sender,
+            message_type=f"response_{original_message.message_type}",
+            content=content,
+            timestamp=datetime.now()
+        )
     
-    async def _explain_analysis(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Convert technical analysis into plain English explanation"""
-        technical_analysis = data.get("technical_analysis", {})
-        user_id = data.get("user_id")
-        skill_level = data.get("skill_level", "beginner")
-        explanation_style = data.get("explanation_style", "conversational")
-        
-        # Update user skill level
-        self.user_skill_levels[user_id] = skill_level
-        
-        # Generate explanation based on skill level
-        explanation = self._generate_explanation(technical_analysis, skill_level, explanation_style)
-        key_takeaways = self._extract_key_takeaways(technical_analysis, skill_level)
-        next_steps = self._suggest_next_steps(technical_analysis, skill_level)
-        follow_up_questions = self._generate_follow_up_questions(technical_analysis, skill_level)
-        
-        return {
-            "plain_english_explanation": explanation,
-            "key_takeaways": key_takeaways,
-            "next_steps": next_steps,
-            "follow_up_questions": follow_up_questions,
-            "coaching_tone": self.coaching_style
-        }
-    
-    async def _answer_question(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Answer poker questions in a conversational manner"""
-        question = data.get("question", "")
-        user_id = data.get("user_id")
-        context = data.get("context", {})
-        
-        # Analyze question to determine topic and complexity
-        question_analysis = self._analyze_question(question)
-        skill_level = self.user_skill_levels.get(user_id, "beginner")
-        
-        # Generate answer based on question type and user skill level
-        answer = self._generate_answer(question, question_analysis, skill_level, context)
-        examples = self._provide_examples(question_analysis, skill_level)
-        related_concepts = self._suggest_related_concepts(question_analysis)
-        
-        return {
-            "answer": answer,
-            "examples": examples,
-            "related_concepts": related_concepts,
-            "question_type": question_analysis["type"],
-            "confidence": question_analysis["confidence"]
-        }
-    
-    async def _provide_encouragement(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Provide motivational coaching and encouragement"""
-        user_id = data.get("user_id")
-        situation = data.get("situation", "general")
-        progress_data = data.get("progress_data", {})
-        
-        # Generate personalized encouragement
-        encouragement_message = self._generate_encouragement(situation, progress_data)
-        progress_highlights = self._highlight_progress(progress_data)
-        motivation = self._provide_motivation(situation)
-        
-        return {
-            "encouragement_message": encouragement_message,
-            "progress_highlights": progress_highlights,
-            "motivation": motivation,
-            "coaching_style": self.coaching_style
-        }
-    
-    async def _create_learning_plan(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Create personalized learning plan"""
-        user_id = data.get("user_id")
-        identified_leaks = data.get("identified_leaks", [])
-        skill_level = data.get("skill_level", "beginner")
-        time_commitment = data.get("time_commitment", "moderate")
-        
-        # Create structured learning plan
-        learning_plan = self._build_learning_plan(identified_leaks, skill_level, time_commitment)
-        weekly_goals = self._create_weekly_goals(learning_plan, time_commitment)
-        practice_exercises = self._suggest_practice_exercises(identified_leaks, skill_level)
-        
-        return {
-            "learning_plan": learning_plan,
-            "weekly_goals": weekly_goals,
-            "practice_exercises": practice_exercises,
-            "estimated_timeline": self._estimate_improvement_timeline(identified_leaks, time_commitment)
-        }
-    
-    def _generate_explanation(self, technical_analysis: Dict[str, Any], skill_level: str, style: str) -> str:
-        """Generate plain English explanation of technical analysis"""
-        # Start with appropriate template
-        intro_templates = self.response_templates["hand_analysis"][skill_level]
-        intro = random.choice(intro_templates)
-        
-        explanation_parts = [intro]
-        
-        # Explain key decisions
-        if "key_decisions" in technical_analysis:
-            explanation_parts.append("\\n\\nHere are the main decisions in this hand:")
-            for decision in technical_analysis["key_decisions"]:
-                plain_explanation = self._translate_decision(decision, skill_level)
-                explanation_parts.append(f"• {plain_explanation}")
-        
-        # Explain mistakes if any
-        if "mistakes" in technical_analysis and technical_analysis["mistakes"]:
-            mistake_intro = random.choice(self.response_templates["mistake_explanation"])
-            explanation_parts.append(f"\\n\\n{mistake_intro}")
-            for mistake in technical_analysis["mistakes"]:
-                plain_mistake = self._translate_mistake(mistake, skill_level)
-                explanation_parts.append(f"• {plain_mistake}")
-        
-        # Add recommendations
-        if "recommendations" in technical_analysis:
-            explanation_parts.append("\\n\\nHere's what I recommend for next time:")
-            for rec in technical_analysis["recommendations"]:
-                plain_rec = self._translate_recommendation(rec, skill_level)
-                explanation_parts.append(f"• {plain_rec}")
-        
-        # Add encouragement
-        encouragement = random.choice(self.response_templates["encouragement"])
-        explanation_parts.append(f"\\n\\n{encouragement}")
-        
-        return "".join(explanation_parts)
-    
-    def _translate_decision(self, decision: Dict[str, Any], skill_level: str) -> str:
-        """Translate technical decision analysis to plain English"""
-        street = decision.get("street", "")
-        decision_type = decision.get("decision", "")
-        analysis = decision.get("analysis", "")
-        
-        if skill_level == "beginner":
-            return f"On the {street}, you {decision_type}. {self._simplify_analysis(analysis)}"
-        elif skill_level == "intermediate":
-            return f"{street.capitalize()}: {decision_type} - {analysis}"
-        else:
-            return f"{street.capitalize()} {decision_type}: {analysis} (alternatives: {', '.join(decision.get('alternatives', []))})"
-    
-    def _translate_mistake(self, mistake: Dict[str, Any], skill_level: str) -> str:
-        """Translate technical mistake analysis to plain English"""
-        mistake_type = mistake.get("type", "")
-        description = mistake.get("description", "")
-        
-        if skill_level == "beginner":
-            return self._simplify_mistake(description)
-        else:
-            return f"{mistake_type}: {description}"
-    
-    def _translate_recommendation(self, recommendation: str, skill_level: str) -> str:
-        """Translate technical recommendation to plain English"""
-        if skill_level == "beginner":
-            return self._simplify_recommendation(recommendation)
-        else:
-            return recommendation
-    
-    def _simplify_analysis(self, analysis: str) -> str:
-        """Simplify technical analysis for beginners"""
-        # Replace technical terms with plain English
-        simplified = analysis
-        for technical_term, plain_term in self.plain_english_concepts.items():
-            simplified = simplified.replace(technical_term, plain_term)
-        return simplified
-    
-    def _simplify_mistake(self, mistake: str) -> str:
-        """Simplify mistake explanation for beginners"""
-        return self._simplify_analysis(mistake)
-    
-    def _simplify_recommendation(self, recommendation: str) -> str:
-        """Simplify recommendation for beginners"""
-        return self._simplify_analysis(recommendation)
-    
-    def _extract_key_takeaways(self, technical_analysis: Dict[str, Any], skill_level: str) -> List[str]:
-        """Extract key takeaways from technical analysis"""
-        takeaways = []
-        
-        if "preflop_analysis" in technical_analysis:
-            takeaways.append("Pay attention to your position when deciding which hands to play")
-        
-        if "postflop_analysis" in technical_analysis:
-            takeaways.append("Consider the board texture when deciding whether to bet or check")
-        
-        if skill_level == "beginner":
-            takeaways.append("Focus on playing tight and aggressive")
-            takeaways.append("Position is one of the most important factors in poker")
-        
-        return takeaways
-    
-    def _suggest_next_steps(self, technical_analysis: Dict[str, Any], skill_level: str) -> List[str]:
-        """Suggest next steps for improvement"""
-        next_steps = []
-        
-        if skill_level == "beginner":
-            next_steps.extend([
-                "Practice hand selection from different positions",
-                "Study basic pot odds calculations",
-                "Review more hands to identify patterns"
-            ])
-        elif skill_level == "intermediate":
-            next_steps.extend([
-                "Work on range construction",
-                "Practice bet sizing in different situations",
-                "Study opponent tendencies"
-            ])
-        else:
-            next_steps.extend([
-                "Analyze GTO solutions for similar spots",
-                "Consider exploitative adjustments",
-                "Review solver outputs for this board texture"
-            ])
-        
-        return next_steps
-    
-    def _generate_follow_up_questions(self, technical_analysis: Dict[str, Any], skill_level: str) -> List[str]:
-        """Generate follow-up questions to encourage learning"""
-        questions = []
-        
-        if skill_level == "beginner":
-            questions.extend([
-                "What would you do if the opponent raised instead?",
-                "How does your position affect this decision?",
-                "What hands do you think your opponent could have?"
-            ])
-        elif skill_level == "intermediate":
-            questions.extend([
-                "How would you adjust against a tighter opponent?",
-                "What's your plan for the turn card?",
-                "How does stack depth affect this decision?"
-            ])
-        else:
-            questions.extend([
-                "What exploitative adjustments would you make?",
-                "How does this compare to the GTO solution?",
-                "What meta-game factors should you consider?"
-            ])
-        
-        return questions[:3]  # Limit to 3 questions
-    
-    def _analyze_question(self, question: str) -> Dict[str, Any]:
-        """Analyze user question to determine type and complexity"""
-        question_lower = question.lower()
-        
-        # Determine question type
-        if any(word in question_lower for word in ["what", "how", "why", "when"]):
-            question_type = "conceptual"
-        elif any(word in question_lower for word in ["should", "would", "better"]):
-            question_type = "decision"
-        elif any(word in question_lower for word in ["calculate", "odds", "equity"]):
-            question_type = "mathematical"
-        else:
-            question_type = "general"
-        
-        # Determine complexity
-        technical_terms = sum(1 for term in self.plain_english_concepts.keys() if term in question_lower)
-        complexity = "advanced" if technical_terms > 2 else "intermediate" if technical_terms > 0 else "beginner"
-        
-        return {
-            "type": question_type,
-            "complexity": complexity,
-            "confidence": 0.8,  # Mock confidence score
-            "technical_terms": technical_terms
-        }
-    
-    def _generate_answer(self, question: str, analysis: Dict[str, Any], skill_level: str, context: Dict[str, Any]) -> str:
-        """Generate answer based on question analysis"""
-        question_type = analysis["type"]
-        
-        if question_type == "conceptual":
-            return self._answer_conceptual_question(question, skill_level, context)
-        elif question_type == "decision":
-            return self._answer_decision_question(question, skill_level, context)
-        elif question_type == "mathematical":
-            return self._answer_mathematical_question(question, skill_level, context)
-        else:
-            return self._answer_general_question(question, skill_level, context)
-    
-    def _answer_conceptual_question(self, question: str, skill_level: str, context: Dict[str, Any]) -> str:
-        """Answer conceptual poker questions"""
-        if "position" in question.lower():
-            if skill_level == "beginner":
-                return "Position in poker refers to where you sit at the table relative to the dealer button. It's super important because players in 'late position' (closer to the button) get to see what everyone else does before making their decision. This gives them a huge advantage!"
-            else:
-                return "Position is crucial in poker strategy. Late position allows you to see opponents' actions before deciding, enabling more profitable bluffs, better pot control, and more accurate hand reading. You can play a wider range of hands profitably from late position."
-        
-        return "That's a great question! Let me explain that concept in simple terms..."
-    
-    def _answer_decision_question(self, question: str, skill_level: str, context: Dict[str, Any]) -> str:
-        """Answer decision-making questions"""
-        return "For this type of decision, you want to consider several factors: your position, your hand strength, your opponent's tendencies, and the pot size. Let me break down how to think through this..."
-    
-    def _answer_mathematical_question(self, question: str, skill_level: str, context: Dict[str, Any]) -> str:
-        """Answer mathematical poker questions"""
-        if skill_level == "beginner":
-            return "Don't worry about complex math right now! The basic idea is: if you're getting good odds (the pot is big compared to what you need to call), and you have a decent chance of winning, then calling is usually right."
-        else:
-            return "For pot odds calculations, you compare the size of the bet you need to call to the total pot size. If your equity (chance of winning) is higher than the pot odds, you should call."
-    
-    def _answer_general_question(self, question: str, skill_level: str, context: Dict[str, Any]) -> str:
-        """Answer general poker questions"""
-        return "That's an interesting question! Let me share some thoughts on that..."
-    
-    def _provide_examples(self, analysis: Dict[str, Any], skill_level: str) -> List[str]:
-        """Provide relevant examples"""
-        examples = []
-        
-        if analysis["type"] == "conceptual":
-            examples.append("For example, if you're on the button (best position), you can play hands like A-9 offsuit profitably")
-        elif analysis["type"] == "mathematical":
-            examples.append("If the pot is $100 and your opponent bets $50, you're getting 3:1 odds")
-        
-        return examples
-    
-    def _suggest_related_concepts(self, analysis: Dict[str, Any]) -> List[str]:
-        """Suggest related concepts to explore"""
-        if analysis["type"] == "conceptual":
-            return ["hand selection", "betting patterns", "reading opponents"]
-        elif analysis["type"] == "mathematical":
-            return ["implied odds", "reverse implied odds", "expected value"]
-        else:
-            return ["basic strategy", "position play", "bankroll management"]
-    
-    def _generate_encouragement(self, situation: str, progress_data: Dict[str, Any]) -> str:
-        """Generate personalized encouragement"""
-        if situation == "mistake":
-            return "Don't worry about that mistake - even the best players in the world make similar errors. What matters is that you're learning from it!"
-        elif situation == "improvement":
-            return "I can see real improvement in your game! You're starting to think about poker the right way."
-        else:
-            return random.choice(self.response_templates["encouragement"])
-    
-    def _highlight_progress(self, progress_data: Dict[str, Any]) -> List[str]:
-        """Highlight user's progress"""
-        highlights = []
-        
-        if progress_data.get("hands_analyzed", 0) > 10:
-            highlights.append(f"You've analyzed {progress_data['hands_analyzed']} hands - great dedication!")
-        
-        if progress_data.get("improvement_score", 0) > 0:
-            highlights.append(f"Your play has improved by {progress_data['improvement_score']}% this week!")
-        
-        return highlights
-    
-    def _provide_motivation(self, situation: str) -> str:
-        """Provide motivational message"""
-        motivations = {
-            "general": "Remember, every pro was once a beginner. Keep practicing and stay curious!",
-            "mistake": "Mistakes are just learning opportunities in disguise. You're on the right path!",
-            "improvement": "You're building solid fundamentals. Keep up the great work!",
-            "plateau": "Plateaus are normal in poker. Push through and you'll reach the next level!"
-        }
-        
-        return motivations.get(situation, motivations["general"])
-    
-    def _build_learning_plan(self, leaks: List[Dict[str, Any]], skill_level: str, time_commitment: str) -> Dict[str, Any]:
-        """Build structured learning plan"""
-        plan = {
-            "focus_areas": [],
-            "timeline": "4 weeks",
-            "difficulty": skill_level,
-            "time_per_week": time_commitment
-        }
-        
-        # Prioritize leaks and create focus areas
-        for leak in leaks[:3]:  # Focus on top 3 leaks
-            plan["focus_areas"].append({
-                "area": leak.get("leak_type", "general"),
-                "description": leak.get("description", ""),
-                "priority": leak.get("fix_priority", 1),
-                "estimated_time": "1 week"
-            })
-        
-        return plan
-    
-    def _create_weekly_goals(self, learning_plan: Dict[str, Any], time_commitment: str) -> List[str]:
-        """Create weekly learning goals"""
-        goals = []
-        
-        for i, focus_area in enumerate(learning_plan["focus_areas"]):
-            week = i + 1
-            area = focus_area["area"]
-            goals.append(f"Week {week}: Focus on improving {area}")
-        
-        return goals
-    
-    def _suggest_practice_exercises(self, leaks: List[Dict[str, Any]], skill_level: str) -> List[Dict[str, Any]]:
-        """Suggest practice exercises"""
-        exercises = []
-        
-        for leak in leaks[:3]:
-            leak_type = leak.get("leak_type", "general")
-            
-            if "preflop" in leak_type:
-                exercises.append({
-                    "title": "Preflop Hand Selection Practice",
-                    "description": "Practice opening ranges from different positions",
-                    "duration": "15 minutes daily"
-                })
-            elif "postflop" in leak_type:
-                exercises.append({
-                    "title": "Board Texture Analysis",
-                    "description": "Analyze different flop textures and betting strategies",
-                    "duration": "20 minutes daily"
-                })
-        
-        return exercises
-    
-    def _estimate_improvement_timeline(self, leaks: List[Dict[str, Any]], time_commitment: str) -> str:
-        """Estimate timeline for improvement"""
-        num_leaks = len(leaks)
-        
-        if time_commitment == "light":
-            weeks = num_leaks * 2
-        elif time_commitment == "moderate":
-            weeks = num_leaks * 1.5
-        else:  # intensive
-            weeks = num_leaks
-        
-        return f"{int(weeks)} weeks"
+    def _create_error_response(self, original_message: AgentMessage, error_message: str) -> AgentMessage:
+        """Create error response message"""
+        return AgentMessage(
+            id=f"coach_error_{original_message.id}",
+            sender=self.agent_id,
+            recipient=original_message.sender,
+            message_type=f"error_{original_message.message_type}",
+            content={
+                'success': False,
+                'error': error_message,
+                'timestamp': datetime.now().isoformat()
+            },
+            timestamp=datetime.now()
+        )

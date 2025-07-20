@@ -10,6 +10,9 @@ import json
 from datetime import datetime
 from typing import Dict, Any, Optional
 import uuid
+import logging
+
+logger = logging.getLogger("PokerPy.WebSocket")
 
 from src.agents.coach import CoachAgent
 from src.models.hand_analyzer import HandAnalyzerAgent
@@ -71,10 +74,10 @@ class ChatHandler:
                     'message': 'Connected to PokerPy AI Coach! How can I help you improve your poker game today?'
                 })
                 
-                print(f"✅ User {user_id} connected (session: {session_id})")
+                logger.info(f"User {user_id} connected (session: {session_id})")
                 
             except Exception as e:
-                print(f"❌ Connection error: {e}")
+                logger.error(f"Connection error: {e}", exc_info=True)
                 emit('error', {'message': 'Connection failed'})
                 disconnect()
         
@@ -92,7 +95,7 @@ class ChatHandler:
                 if user_id in self.user_rooms:
                     del self.user_rooms[user_id]
                 
-                print(f"👋 User {user_id} disconnected (session: {session_id})")
+                logger.info(f"User {user_id} disconnected (session: {session_id})")
         
         @self.socketio.on('chat_message')
         def handle_chat_message(data):
@@ -132,7 +135,7 @@ class ChatHandler:
                 )
                 
             except Exception as e:
-                print(f"❌ Chat message error: {e}")
+                logger.error(f"Chat message error: {e}", exc_info=True)
                 emit('error', {'message': 'Failed to process message'})
         
         @self.socketio.on('analyze_hand_live')
@@ -166,7 +169,7 @@ class ChatHandler:
                 )
                 
             except Exception as e:
-                print(f"❌ Live hand analysis error: {e}")
+                logger.error(f"Live hand analysis error: {e}", exc_info=True)
                 emit('error', {'message': 'Failed to analyze hand'})
         
         @self.socketio.on('join_room')
@@ -177,9 +180,9 @@ class ChatHandler:
                 if room_name:
                     join_room(room_name)
                     emit('joined_room', {'room': room_name})
-                    print(f"User joined room: {room_name}")
+                    logger.info(f"User joined room: {room_name}")
             except Exception as e:
-                print(f"❌ Join room error: {e}")
+                logger.error(f"Join room error: {e}", exc_info=True)
                 emit('error', {'message': 'Failed to join room'})
         
         @self.socketio.on('leave_room')
@@ -190,9 +193,9 @@ class ChatHandler:
                 if room_name:
                     leave_room(room_name)
                     emit('left_room', {'room': room_name})
-                    print(f"User left room: {room_name}")
+                    logger.info(f"User left room: {room_name}")
             except Exception as e:
-                print(f"❌ Leave room error: {e}")
+                logger.error(f"Leave room error: {e}", exc_info=True)
                 emit('error', {'message': 'Failed to leave room'})
         
         @self.socketio.on('ping')
@@ -226,7 +229,7 @@ class ChatHandler:
                 }, room=room_id)
 
         except Exception as e:
-            print(f"❌ Coach message processing error: {e}")
+            logger.error(f"Coach message processing error: {e}", exc_info=True)
             self.socketio.emit('coach_typing', {'typing': False}, room=room_id)
             self.socketio.emit('error', {
                 'message': 'Sorry, I encountered an error processing your message. Please try again.'
@@ -311,7 +314,7 @@ class ChatHandler:
                 loop.close()
                 
         except Exception as e:
-            print(f"❌ Live hand analysis error: {e}")
+            logger.error(f"Live hand analysis error: {e}", exc_info=True)
             self.socketio.emit('analysis_error', {
                 'message': 'An error occurred during hand analysis. Please try again.'
             }, room=room_id)
@@ -354,7 +357,7 @@ class CommunityHandler:
                     'message': 'You are now receiving live community updates!'
                 })
             except Exception as e:
-                print(f"❌ Join community error: {e}")
+                logger.error(f"Join community error: {e}", exc_info=True)
                 emit('error', {'message': 'Failed to join community'})
         
         @self.socketio.on('leave_community')
@@ -364,7 +367,7 @@ class CommunityHandler:
                 leave_room('community')
                 emit('left_community', {'status': 'left'})
             except Exception as e:
-                print(f"❌ Leave community error: {e}")
+                logger.error(f"Leave community error: {e}", exc_info=True)
     
     def notify_new_post(self, post_data: Dict[str, Any]):
         """Notify community of new post"""
@@ -402,7 +405,7 @@ class ProgressHandler:
                         'user_id': user_id
                     })
             except Exception as e:
-                print(f"❌ Subscribe progress error: {e}")
+                logger.error(f"Subscribe progress error: {e}", exc_info=True)
                 emit('error', {'message': 'Failed to subscribe to progress updates'})
     
     def notify_progress_update(self, user_id: str, progress_data: Dict[str, Any]):

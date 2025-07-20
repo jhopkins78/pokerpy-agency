@@ -205,7 +205,7 @@ class PokerPyMigration:
             
             # Add RAG imports if not present
             rag_imports = [
-                "from .coach_rag_enhanced import RAGEnhancedCoachAgent"
+                "from .coach import CoachAgent"
             ]
             
             for import_line in rag_imports:
@@ -319,10 +319,10 @@ if __name__ == "__main__":
                 logger.error(f"Missing RAG file: {rag_file}")
         
         # Check if RAG-enhanced coach agent exists
-        rag_coach = self.src_dir / "agents" / "coach_rag_enhanced.py"
+        rag_coach = self.src_dir / "agents" / "coach.py"
         if not rag_coach.exists():
             validation_results['agents_accessible'] = False
-            logger.error("RAG-enhanced coach agent not found")
+            logger.error("Coach agent not found")
         
         # Check main application
         main_file = self.project_root / "main.py"
@@ -425,4 +425,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

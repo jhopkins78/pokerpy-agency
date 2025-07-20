@@ -30,15 +30,51 @@ from Agentic_Rag.rag_routes import rag_bp, init_rag_routes
 from src.routes.chat_routes import chat_bp
 
 # Import enhanced agents
-from Agentic_Rag.coach_rag_enhanced import RAGEnhancedCoachAgent
+from src.agents.coach import CoachAgent
 from src.models.orchestrator import AgentOrchestrator
 
 from sqlalchemy import text
 
+# Configure logging at module level
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 def create_app():
     """Create and configure the Flask application with RAG integration"""
     app = Flask(__name__)
-    
+
+    # --- API Monitoring: Log requests, response time, and exceptions ---
+    import time
+    from flask import request, g
+
+    @app.before_request
+    def start_timer():
+        g.start_time = time.time()
+
+    @app.after_request
+    def log_request(response):
+        if hasattr(g, "start_time"):
+            duration = (time.time() - g.start_time) * 1000  # ms
+        else:
+            duration = -1
+        ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+        logger.info(
+            f"API Request: {request.method} {request.path} from {ip} | Status: {response.status_code} | Time: {duration:.2f}ms"
+        )
+        return response
+
+    @app.teardown_request
+    def log_exception(exc):
+        if exc is not None:
+            ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+            logger.error(
+                f"Exception during request: {request.method} {request.path} from {ip} | Error: {exc}",
+                exc_info=True,
+            )
+
     # Configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///pokerpy.db')
@@ -49,13 +85,6 @@ def create_app():
     CORS(app, origins="*")
     db.init_app(app)
     socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
-    
-    # Configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    logger = logging.getLogger(__name__)
     
     # Initialize RAG system
     logger.info("Initializing RAG system...")
@@ -85,7 +114,7 @@ def create_app():
     knowledge_source_manager = KnowledgeSourceManager(knowledge_base, vector_store)
     
     # Create enhanced agents
-    rag_coach = RAGEnhancedCoachAgent(rag_orchestrator)
+    rag_coach = CoachAgent(rag_orchestrator)
     agent_orchestrator.register_agent(rag_coach)
     
     # Store RAG components in app context
@@ -205,14 +234,14 @@ def main():
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
-    print(f"Starting PokerPy RAG-Enhanced Backend on {host}:{port}")
-    print(f"Debug mode: {debug}")
-    print("Available endpoints:")
-    print("  - Health check: /api/health")
-    print("  - Agents API: /api/agents")
-    print("  - Authentication: /api/auth")
-    print("  - RAG System: /api/rag")
-    print("  - WebSocket: /socket.io")
+    logger.info(f"Starting PokerPy RAG-Enhanced Backend on {host}:{port}")
+    logger.info(f"Debug mode: {debug}")
+    logger.info("Available endpoints:")
+    logger.info("  - Health check: /api/health")
+    logger.info("  - Agents API: /api/agents")
+    logger.info("  - Authentication: /api/auth")
+    logger.info("  - RAG System: /api/rag")
+    logger.info("  - WebSocket: /socket.io")
     
     # Run the application
     socketio.run(
@@ -222,6 +251,6 @@ def main():
         debug=debug,
         allow_unsafe_werkzeug=True
     )
-    print("PokerPy RAG-Enhanced Backend is running...")
+    logger.info("PokerPy RAG-Enhanced Backend is running...")
 if __name__ == '__main__':
     main()

@@ -9,7 +9,7 @@ from datetime import datetime
 import logging
 
 from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
-from .coach_rag_enhanced import RAGEnhancedCoachAgent
+from src.agents.coach import CoachAgent
 from Agentic_Rag.rag.rag_orchestrator import RAGOrchestrator
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ class CompatibilityWrapper:
         
         # Create RAG-enhanced agents
         if self.rag_orchestrator:
-            self.enhanced_agents['coach'] = RAGEnhancedCoachAgent(self.rag_orchestrator)
+            self.enhanced_agents['coach'] = CoachAgent(self.rag_orchestrator)
         
         # Map old agent IDs to new agents
         self.agent_mapping = {
