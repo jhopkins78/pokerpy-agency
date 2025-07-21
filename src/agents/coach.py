@@ -559,12 +559,16 @@ class CoachAgent(BaseAgent):
             self.logger.warning("CoachAgent is missing _generate_goals. Returning empty goals list.")
             goals = []
 
+        import os
         return {
             "response": response,
             "suggested_simulation": simulation,
             "active_goals": goals,
             "sources": [],  # Placeholder for future RAG output
-            "context_used": context
+            "context_used": context,
+            "rag_debug": {
+                "used_simulation_engine": os.getenv("SIMULATION_ENGINE", "static")
+            }
         }
 
     def _suggest_simulation(self, user_id: str, context: dict) -> dict:
