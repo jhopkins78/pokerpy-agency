@@ -523,3 +523,62 @@ class CoachAgent(BaseAgent):
             },
             timestamp=datetime.now()
         )
+
+    def generate_coaching_response(self, user_id: str, message: str, context: dict) -> dict:
+        """
+        Orchestrates a full coaching response based on message and context.
+        Returns: dict with response, simulation, goals, context_used, sources.
+        """
+        # Analyze question
+        if hasattr(self, "_analyze_question"):
+            analysis = self._analyze_question(message)
+        else:
+            self.logger.warning("CoachAgent is missing _analyze_question. Returning fallback analysis.")
+            analysis = {"analysis": "No analysis available (method missing)"}
+
+        skill_level = context.get("skill_level", "beginner")
+
+        # Generate answer
+        if hasattr(self, "_generate_answer"):
+            response = self._generate_answer(message, analysis, skill_level, context)
+        else:
+            self.logger.warning("CoachAgent is missing _generate_answer. Returning fallback response.")
+            response = "No answer available (method missing)."
+
+        # Suggest simulation
+        if hasattr(self, "_suggest_simulation"):
+            simulation = self._suggest_simulation(user_id, context)
+        else:
+            self.logger.warning("CoachAgent is missing _suggest_simulation. Returning fallback simulation.")
+            simulation = {"simulation": "No simulation available (method missing)"}
+
+        # Generate goals if method exists
+        if hasattr(self, "_generate_goals"):
+            goals = self._generate_goals(message, context)
+        else:
+            self.logger.warning("CoachAgent is missing _generate_goals. Returning empty goals list.")
+            goals = []
+
+        return {
+            "response": response,
+            "suggested_simulation": simulation,
+            "active_goals": goals,
+            "sources": [],  # Placeholder for future RAG output
+            "context_used": context
+        }
+
+    def _suggest_simulation(self, user_id: str, context: dict) -> dict:
+        """
+        Delegates to the simulation engine for simulation generation.
+        """
+        try:
+            from src.simulation_engine import suggest_simulation
+            return suggest_simulation(user_id, context)
+        except Exception as e:
+            self.logger.warning(f"Simulation engine error: {e}")
+            return {
+                "simulation_id": "sim_error",
+                "scenario": "Simulation engine unavailable.",
+                "stack_size": context.get("stack_size", 100),
+                "action": "call"
+            }
