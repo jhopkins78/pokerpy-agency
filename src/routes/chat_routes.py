@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from src.harmony_engine import HarmonyEngine
+from src.agents.coach import CoachAgent
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/api')
 
@@ -14,7 +14,8 @@ def chat():
         user_id = data.get("user_id", "anon")
         message = data.get("message", "")
         context = data.get("context", {})
-        response = HarmonyEngine.respond(user_id, message, context)
+        agent = CoachAgent()
+        response = agent.generate_coaching_response(user_id, message, context)
 
         # --- Chat Log Tracking ---
         log_entry = {
