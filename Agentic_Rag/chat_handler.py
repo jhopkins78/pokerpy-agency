@@ -14,7 +14,7 @@ import logging
 
 logger = logging.getLogger("PokerPy.WebSocket")
 
-from src.agents.coach import CoachAgent
+from src.models.coach import CoachAgent
 from src.models.hand_analyzer import HandAnalyzerAgent
 from src.agents.base_agent import AgentMessage
 from src.harmony_engine import HarmonyEngine

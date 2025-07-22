@@ -5,105 +5,84 @@ import uuid
 import logging
 from typing import Dict
 from dotenv import load_dotenv
+import openai
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+os.makedirs("logs", exist_ok=True)
+logging.basicConfig(
+    filename="logs/simulation_engine.log",
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
 
 # Load environment variables from .env if not already loaded
 load_dotenv(override=True)
 
-try:
-    import openai
-except ImportError:
-    openai = None
-
 logger = logging.getLogger("simulation_engine")
 logger.setLevel(logging.INFO)
 
+import json
+
+def build_prompt(context: dict) -> str:
+    """
+    Builds a prompt for the LLM based on the provided context.
+    """
+    return (
+        "Given the following context, suggest a poker simulation scenario for a poker training tool. "
+        "Return a scenario description, a recommended stack size (e.g., '50bb'), and a recommended action (e.g., 'Call', 'Fold', 'Raise').\n"
+        f"Context:\n{json.dumps(context, indent=2)}"
+    )
+
 def suggest_simulation(user_id: str, context: dict) -> dict:
-    """
-    Suggests a poker simulation scenario for the user.
-    If SIMULATION_ENGINE=llm, uses OpenAI to generate a dynamic scenario.
-    Otherwise, returns a static placeholder.
-    Always returns a dict with keys: simulation_id, scenario, stack_size, action (all as strings).
-    """
-    # Environment config
-    sim_engine = os.getenv("SIMULATION_ENGINE", "llm").lower()
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-    dev_mode = os.getenv("FLASK_ENV", "").lower() == "development" or os.getenv("DEV_MODE", "0") == "1"
+    engine_mode = os.getenv("SIMULATION_ENGINE", "STATIC")
+    logging.debug(f"SIMULATION_ENGINE={engine_mode}")
+    logging.debug(f"Context received: {context}")
 
-    # Extract context fields
-    position = context.get("position", "middle position")
-    hand = context.get("hand", "Ah Kh")
-    stack_size_val = context.get("stack_size", 50)
-    skill_level = context.get("skill_level", "beginner")
-
-    # Always coerce stack_size to string with "bb" suffix
-    def format_stack_size(val):
-        try:
-            if isinstance(val, str) and val.endswith("bb"):
-                return val
-            return f"{int(val)}bb"
-        except Exception:
-            return "50bb"
-
-    # Fallback static simulation
-    def static_simulation(fallback_reason=None):
-        if fallback_reason:
-            logger.warning(f"Falling back to static simulation: {fallback_reason}")
-        logger.info("Simulation engine used: static")
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if not openai_key:
+        logging.error("OPENAI_API_KEY not found in environment.")
         return {
-            "simulation_id": "sim_placeholder",
             "scenario": "This is a test simulation output.",
-            "stack_size": format_stack_size(stack_size_val),
+            "stack_size": "50bb",
             "action": "Call"
         }
 
-    if sim_engine != "llm" or not openai or not openai_api_key:
-        return static_simulation("LLM engine not enabled or OpenAI not available")
+    if engine_mode.lower() == "llm":
+        try:
+            openai.api_key = openai_key
 
-    logger.info("Simulation engine used: llm")
+            prompt = f"Simulate a poker scenario. Context: {context}"
+            logging.debug(f"LLM prompt: {prompt}")
+            print("[DEBUG] Reached OpenAI call")
+            logging.debug("Reached OpenAI call")
 
-    # LLM-based simulation
-    prompt = (
-        f"You are a poker simulation engine. Generate a realistic poker scenario for a player with the following details:\n"
-        f"- Position: {position}\n"
-        f"- Hand: {hand}\n"
-        f"- Stack size: {format_stack_size(stack_size_val)}\n"
-        f"- Skill level: {skill_level}\n"
-        f"Output a JSON object with keys: simulation_id, scenario, stack_size, action. "
-        f"All values must be strings. stack_size should be like '50bb'. "
-        f"Make the scenario unique and actionable. Example:\n"
-        f'{{"simulation_id": "...", "scenario": "...", "stack_size": "50bb", "action": "Call"}}, '
-        f'but do not repeat the example, generate a new one each time.'
-    )
+            from openai import OpenAI
+            client = OpenAI()
 
-    if dev_mode:
-        logger.info(f"[DEV] LLM Simulation Prompt: {prompt}")
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[{"role": "user", "content": prompt}]
+            )
 
-    try:
-        openai.api_key = openai_api_key
-        response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a poker simulation engine."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.8,
-            max_tokens=300,
-        )
-        content = response.choices[0].message.content.strip()
-        import json
-        # Try to parse the LLM output as JSON
-        sim = json.loads(content)
-        # Ensure required keys and types
-        required_keys = ["simulation_id", "scenario", "stack_size", "action"]
-        for k in required_keys:
-            if k not in sim:
-                logger.warning(f"LLM simulation missing key: {k}. Falling back to static.")
-                return static_simulation(f"Missing key: {k}")
-            if not isinstance(sim[k], str):
-                sim[k] = str(sim[k])
-        # Coerce stack_size to correct format
-        sim["stack_size"] = format_stack_size(sim["stack_size"])
-        return sim
-    except Exception as e:
-        logger.error(f"OpenAI simulation generation failed: {e}")
-        return static_simulation(f"OpenAI error: {e}")
+            scenario_text = response.choices[0].message.content
+            logging.debug(f"LLM raw output: {scenario_text}")
+            print("[LLM raw output]", scenario_text)
+
+            return {
+                "scenario": scenario_text,
+                "stack_size": context.get("player_stack", "75bb"),
+                "action": "Call"
+            }
+
+        except Exception as e:
+            logging.exception("LLM generation failed with an unhandled exception.")
+            print("[LLM ERROR]", e)
+
+    # Fallback
+    fallback = {
+        "scenario": "This is a test simulation output.",
+        "stack_size": "50bb",
+        "action": "Call"
+    }
+    logging.debug(f"Fallback simulation used: {fallback}")
+    return fallback

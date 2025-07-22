@@ -1,7 +1,7 @@
 # src/harmony_engine.py
 
 from Agentic_Rag.rag.knowledge_base import PokerKnowledgeBase
-from src.agents.coach import CoachAgent
+from src.models.coach import CoachAgent
 from src.agents.base_agent import AgentMessage
 import asyncio
 from src.simulation_engine import suggest_simulation

@@ -7,6 +7,8 @@ print("ENV Check | DATABASE_URL:", bool(os.getenv("DATABASE_URL")))
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
 
+from dotenv import load_dotenv
+load_dotenv()
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO
@@ -15,6 +17,7 @@ from src.routes.user import user_bp
 from src.routes.agents import agents_bp
 from src.routes.auth import auth_bp, init_jwt
 from src.websockets.chat_handler import create_websocket_handlers
+from src.routes.chat_routes import chat_bp
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
@@ -32,6 +35,7 @@ jwt = init_jwt(app)
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(agents_bp, url_prefix='/api/agents')
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
+app.register_blueprint(chat_bp)
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"

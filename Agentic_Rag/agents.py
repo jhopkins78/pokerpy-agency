@@ -11,7 +11,7 @@ from typing import Dict, Any
 
 from src.models.orchestrator import AgentOrchestrator
 from src.models.hand_analyzer import HandAnalyzerAgent
-from src.agents.coach import CoachAgent
+from src.models.coach import CoachAgent
 from src.models.learning_path import LearningPathAgent
 from src.models.community import CommunityAgent
 from src.agents.base_agent import AgentMessage

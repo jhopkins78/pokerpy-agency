@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from src.agents.coach import CoachAgent
+from src.models.coach import CoachAgent
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/api')
 

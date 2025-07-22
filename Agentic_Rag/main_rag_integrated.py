@@ -30,7 +30,7 @@ from Agentic_Rag.rag_routes import rag_bp, init_rag_routes
 from src.routes.chat_routes import chat_bp
 
 # Import enhanced agents
-from src.agents.coach import CoachAgent
+from src.models.coach import CoachAgent
 from src.models.orchestrator import AgentOrchestrator
 
 from sqlalchemy import text

@@ -22,6 +22,14 @@ RUN pip install -r requirements.txt
 # Copy all source code
 COPY . .
 
+# Clear all proxy-related environment variables to prevent OpenAI SDK errors
+ENV HTTP_PROXY= \
+    HTTPS_PROXY= \
+    http_proxy= \
+    https_proxy= \
+    ALL_PROXY= \
+    all_proxy=
+
 # Expose default port
 EXPOSE 5000
 

@@ -9,7 +9,7 @@ from datetime import datetime
 import logging
 
 from src.agents.base_agent import BaseAgent, AgentMessage, AgentCapability
-from src.agents.coach import CoachAgent
+from src.models.coach import CoachAgent
 from Agentic_Rag.rag.rag_orchestrator import RAGOrchestrator
 
 logger = logging.getLogger(__name__)
