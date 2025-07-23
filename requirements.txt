@@ -53,6 +53,8 @@ eventlet==0.33.3  # For SocketIO production deployment
 
 # Environment and configuration
 python-decouple==3.8
+transformers
+torch
 # RAG System Dependencies
 numpy==1.24.4
 scipy>=1.12.0

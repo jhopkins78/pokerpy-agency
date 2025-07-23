@@ -16,6 +16,13 @@ from src.models.learning_path import LearningPathAgent
 from src.models.community import CommunityAgent
 from src.agents.base_agent import AgentMessage
 
+# Import Poker Transformer model handler
+import traceback
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Poker_Transformers-main")))
+from model_handler import analyze_hand
+
 # Create blueprint
 agents_bp = Blueprint('agents', __name__)
 
@@ -576,6 +583,31 @@ def get_encouragement():
         return jsonify({"error": str(e)}), 500
 
 # Error handlers
+@agents_bp.route('/api/agents/analyze-hand', methods=['POST'])
+def analyze_hand_transformer():
+    """
+    Analyze a poker hand using the Poker Transformer model.
+    Expects JSON: { "hand_text": "..." }
+    Returns: { "analysis": "..." }
+    """
+    try:
+        data = request.get_json()
+        hand_text = data.get("hand_text") if data else None
+
+        if not hand_text:
+            return jsonify({"error": "Missing hand_text"}), 400
+
+        try:
+            result = analyze_hand(hand_text)
+            return jsonify({"analysis": result}), 200
+        except Exception as e:
+            print(traceback.format_exc())
+            return jsonify({"error": str(e)}), 500
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
+
 @agents_bp.errorhandler(404)
 def not_found(error):
     return jsonify({"error": "Endpoint not found"}), 404
