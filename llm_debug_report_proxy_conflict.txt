@@ -1,0 +1,50 @@
+PokerPy LLM Integration Debug Report
+Problem 1: Fallback Simulation Response (No LLM Output)
+Symptom: The backend always returned the fallback simulation output ("This is a test simulation output."), even when SIMULATION_ENGINE=llm and the OpenAI call should have been triggered.
+Root Cause: The code checked if engine_mode == "LLM": (case-sensitive), but the environment variable was set as "llm".
+Solution: Changed the check to if engine_mode.lower() == "llm": to ensure case-insensitive matching.
+Problem 2: OpenAI API Call Fails with Deprecated Syntax
+Symptom: After fixing the engine mode, the logs showed an error:
+openai.lib._old_api.APIRemovedInV1: You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0
+Root Cause: The code used the old OpenAI SDK syntax (openai.ChatCompletion.create), which is not supported in openai>=1.0.0.
+Solution: Updated the code to use the v1+ syntax:
+from openai import OpenAI
+client = OpenAI()
+response = client.chat.completions.create(...)
+
+Problem 3: TypeError: Client.init() got an unexpected keyword argument 'proxies'
+Symptom: The OpenAI client failed with:
+TypeError: Client.__init__() got an unexpected keyword argument 'proxies'
+Root Cause: Proxy-related environment variables (e.g., HTTP_PROXY, HTTPS_PROXY) were being injected into the container, causing the OpenAI SDK to receive an unsupported proxies argument.
+Solution:
+Cleared all proxy-related environment variables in the Dockerfile:
+ENV HTTP_PROXY= \
+    HTTPS_PROXY= \
+    http_proxy= \
+    https_proxy= \
+    ALL_PROXY= \
+    all_proxy=
+
+Also passed these as empty values at runtime with -e flags.
+Problem 4: OpenAI Client Fails Due to Missing API Key
+Symptom: The minimal test script failed with:
+The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable
+Root Cause: The OPENAI_API_KEY environment variable was not set in the running container.
+Solution: Passed the API key at runtime using -e OPENAI_API_KEY=... in the Docker run command.
+Problem 5: OpenAI SDK Version Mismatch
+Symptom: Even after upgrading, the container still used an older version of the OpenAI SDK (1.30.5), causing persistent errors.
+Root Cause: The requirements.txt file pinned openai to 1.30.5, and Docker builds were not using the latest version.
+Solution: Updated requirements.txt to openai>=1.97.0, rebuilt the Docker image, and restarted the container.
+Problem 6: Verifying the Fixes
+Symptom: Needed to confirm that the OpenAI client could be instantiated and that the backend could make successful LLM calls.
+Solution:
+Created and ran a minimal test script in the container to verify OpenAI client instantiation.
+Triggered simulation requests and checked logs for LLM output.
+Confirmed that the backend now returns dynamically generated LLM scenarios.
+Final State
+The backend now successfully calls the OpenAI API and returns LLM-generated poker simulation scenarios.
+All proxy, API key, and SDK version issues have been resolved.
+The system is fully operational for LLM-powered poker simulation.
+
+
+
