@@ -69,7 +69,7 @@ def main():
 
         # Safety check
         if cpu_before > CPU_THRESHOLD or mem_before > (psutil.virtual_memory().total / (1024 * 1024)) * (MEM_THRESHOLD / 100):
-            print(f"🛑 System resources exceeded before processing {fname}. Aborting batch.")
+            print(f"System resources exceeded before processing {fname}. Aborting batch.")
             break
 
         try:
@@ -117,7 +117,7 @@ def main():
         except Exception as e:
             failed += 1
             log_csv(ERROR_LOG, [datetime.now().isoformat(), fname, traceback.format_exc()])
-            print(f"⚠️ Error processing {fname}: {e}")
+            print(f"Error processing {fname}: {e}")
             continue
 
         # System health after
@@ -126,7 +126,7 @@ def main():
 
         # Safety check after
         if cpu_after > CPU_THRESHOLD or mem_after > (psutil.virtual_memory().total / (1024 * 1024)) * (MEM_THRESHOLD / 100):
-            print(f"🛑 System resources exceeded after processing {fname}. Aborting batch.")
+            print(f"System resources exceeded after processing {fname}. Aborting batch.")
             break
 
     print(f"\n=== Batch Summary ===")

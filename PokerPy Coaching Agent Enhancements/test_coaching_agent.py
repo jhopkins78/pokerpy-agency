@@ -5,8 +5,13 @@ from datetime import datetime
 import sys
 import os
 
-# Add the backend directory to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+# Ensure test directory and src are in sys.path for imports
+test_dir = os.path.dirname(os.path.abspath(__file__))
+src_dir = os.path.abspath(os.path.join(test_dir, '..', 'src'))
+if test_dir not in sys.path:
+    sys.path.insert(0, test_dir)
+if src_dir not in sys.path:
+    sys.path.insert(0, src_dir)
 
 from coaching_agent import PokerCoachingAgent, CoachingResponse
 from memory_manager import MemoryManager
@@ -139,6 +144,87 @@ class TestPokerCoachingAgent:
         assert "context" in response
         assert "suggestions" in response
         assert isinstance(response["suggestions"], list)
+
+    @patch('openai.OpenAI')
+    def test_generate_response_with_simulation(self, mock_openai, coaching_agent):
+        """Test response generation with poker simulation context and RAG grounding"""
+        # Mock RAG doc
+        coaching_agent.rag_system.search.return_value = [
+            {
+                "content": (
+                    "When facing aggressive 3-bettors from mid to late position, consider tightening your opening range from UTG. "
+                    "AKs is strong, but be prepared to fold to a large 3-bet unless you have a specific read. "
+                    "If you call and miss the flop out of position, proceed cautiously and avoid overcommitting."
+                )
+            }
+        ]
+
+        # Mock OpenAI response for both simulation and coaching
+        mock_client = Mock()
+        mock_response_sim = Mock()
+        mock_response_sim.choices = [Mock()]
+        # Simulated LLM output for simulation
+        mock_response_sim.choices[0].message.content = (
+            "Scenario: You are UTG with AKs in an 8-handed $1/$2 game. "
+            "Villains from mid to button are wild and love to 3-bet light. "
+            "If you open, you expect a 3-bet. If you call and brick the flop, you are out of position.\n"
+            "Recommended Action: Open-raise to 2.5bb, but be ready to fold to a large 3-bet unless you have a strong read. "
+            "Consider 4-betting only if you have a specific reason. Flatting is risky against aggressive opponents.\n"
+            "Strategic Guidance: AKs is a premium hand, but in this spot, play cautiously. "
+            "If you miss the flop out of position, check-folding is often best. Use knowledge base advice: tighten your opening range and avoid overcommitting postflop."
+        )
+        # Simulated LLM output for coaching
+        mock_response_coach = Mock()
+        mock_response_coach.choices = [Mock()]
+        mock_response_coach.choices[0].message.content = (
+            "Remember, playing strong hands from early position is profitable in the long run. "
+            "Suggestion: Review your opening ranges for UTG\n"
+            "Suggestion: Practice postflop play out of position\n"
+            "What situations make you most uncomfortable with AKs under the gun?"
+        )
+        # The agent will call OpenAI twice: once for simulation, once for coaching
+        mock_client.chat.completions.create.side_effect = [
+            mock_response_sim,  # For simulation
+            mock_response_coach  # For coaching
+        ]
+        mock_openai.return_value = mock_client
+
+        coaching_agent.client = mock_client
+
+        response = coaching_agent.generate_response(
+            user_id="test_user",
+            message=(
+                "I'm UTG with AK suited in a $1/$2 game with 8 players. "
+                "The players from mid to the button are wild and love to 3-bet light. "
+                "If I open, I know I’m getting 3-bet. Do I flat or 4-bet? "
+                "What if I brick the flop and I’m out of position—how do I continue?"
+            ),
+            context={}
+        )
+
+        # Check simulation content
+        assert "message" in response
+        sim = response["message"]
+        assert "Poker Simulation:" in sim
+        assert "Scenario:" in sim
+        assert "Recommended Action:" in sim
+        assert "Strategic Guidance:" in sim
+        # Grounding checks
+        assert "AKs" in sim
+        assert "UTG" in sim or "under the gun" in sim
+        assert "3-bet" in sim or "aggressive" in sim
+        assert any(word in sim for word in ["raise", "flat", "fold", "4-bet"])
+        assert "miss the flop" in sim or "brick the flop" in sim
+        # No fictional names
+        assert not any(name in sim for name in ["Alex", "John"])
+        # RAG debug
+        assert "rag_debug" in response or "rag_debug" in response.get("context", {})
+        rag_debug = response.get("rag_debug") or response.get("context", {}).get("rag_debug")
+        assert rag_debug and any("aggressive 3-bettors" in doc or "AKs" in doc for doc in rag_debug)
+        # Suggestions
+        assert "suggestions" in response
+        assert isinstance(response["suggestions"], list)
+        assert any("Review your opening ranges" in s or "Practice postflop play" in s for s in response["suggestions"])
     
     @patch('openai.OpenAI')
     def test_generate_daily_insight(self, mock_openai, coaching_agent):
@@ -215,4 +301,3 @@ class TestPokerCoachingAgent:
 
 if __name__ == "__main__":
     pytest.main([__file__])
-

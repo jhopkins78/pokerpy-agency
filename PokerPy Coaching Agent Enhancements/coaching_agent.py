@@ -6,6 +6,17 @@ from typing import Dict, List, Optional, Any
 import logging
 from dataclasses import dataclass
 
+import sys
+import os
+import importlib.util
+
+# Dynamically import simulation_engine from src/simulation_engine.py
+sim_engine_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'simulation_engine.py'))
+spec = importlib.util.spec_from_file_location("simulation_engine", sim_engine_path)
+sim_engine = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(sim_engine)
+suggest_simulation = sim_engine.suggest_simulation
+
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -15,6 +26,66 @@ class CoachingResponse:
     suggestions: List[str]
     emotional_tone: str
     follow_up_questions: List[str]
+
+import re
+
+def parse_poker_context(message: str) -> dict:
+    """
+    Extract structured poker context from a user message.
+    Returns a dict with keys: hand, position, table_size, villain_style, stack_size, flop_concern.
+    Uses regex and keyword scanning.
+    """
+    context = {}
+
+    # Hand (e.g., AKs, QJo, pocket aces, etc.)
+    hand_match = re.search(r"\b([2-9TJQKA]{2}[so]?|pocket\s+[2-9TJQKA]{1,2}s?)\b", message, re.IGNORECASE)
+    if hand_match:
+        context["hand"] = hand_match.group(1).upper().replace("POCKET ", "")
+
+    # Position (UTG, MP, CO, BTN, SB, BB, etc.)
+    positions = ["UTG", "MP", "CO", "BTN", "SB", "BB", "early position", "middle position", "cutoff", "button", "small blind", "big blind"]
+    for pos in positions:
+        if re.search(rf"\b{pos}\b", message, re.IGNORECASE):
+            context["position"] = pos.upper() if len(pos) <= 3 else pos.title()
+            break
+
+    # Table size (6-max, 9-handed, 8 players, etc.)
+    table_match = re.search(r"(\d+)[-\s]?(max|handed|players|player table)", message, re.IGNORECASE)
+    if table_match:
+        context["table_size"] = int(table_match.group(1))
+    else:
+        # fallback: look for "full ring"
+        if "full ring" in message.lower():
+            context["table_size"] = 9
+
+    # Villain style (aggressive, loose, tight, 3-bettor, etc.)
+    villain_styles = ["aggressive", "loose", "tight", "passive", "3-bettor", "maniac", "nit", "calling station"]
+    found_styles = []
+    for style in villain_styles:
+        if style in message.lower():
+            found_styles.append(style)
+    if found_styles:
+        context["villain_style"] = ", ".join(found_styles)
+
+    # Stack size (e.g., 100bb, 50bb, 200bb, short stack, deep stack)
+    stack_match = re.search(r"(\d+)\s*bb", message, re.IGNORECASE)
+    if stack_match:
+        context["stack_size"] = f"{stack_match.group(1)}bb"
+    else:
+        for stack_word in ["short stack", "deep stack"]:
+            if stack_word in message.lower():
+                context["stack_size"] = stack_word
+
+    # Flop concern (missing flop, out of position, etc.)
+    flop_keywords = ["missed the flop", "missing flop", "out of position", "draw heavy", "wet board", "dry board", "scary board"]
+    found_flop = []
+    for kw in flop_keywords:
+        if kw in message.lower():
+            found_flop.append(kw)
+    if found_flop:
+        context["flop_concern"] = ", ".join(found_flop)
+
+    return context
 
 class PokerCoachingAgent:
     def __init__(self, rag_system, memory_manager):
@@ -56,7 +127,7 @@ class PokerCoachingAgent:
         }
         
     def generate_response(self, user_id: str, message: str, context: Dict, user_profile: Optional[Dict] = None) -> Dict:
-        """Generate a coaching response based on user input and context"""
+        """Generate a coaching response based on user input and context, with simulation if poker context is detected"""
         try:
             # Get user profile and conversation history
             if not user_profile:
@@ -64,17 +135,48 @@ class PokerCoachingAgent:
             
             conversation_history = self.memory_manager.get_recent_conversations(user_id, limit=5)
             
+            # --- NEW: Parse poker context from message ---
+            parsed_context = parse_poker_context(message)
+            # Merge with any provided context (context param may have session info)
+            merged_context = {**context, **parsed_context} if context else parsed_context
+
+            # --- RAG retrieval using parsed context as query ---
+            context_query = " ".join(str(v) for v in parsed_context.values() if v)
+            rag_docs = []
+            try:
+                if context_query:
+                    rag_results = self.rag_system.search(context_query, category="all", limit=2)
+                else:
+                    rag_results = []
+                if rag_results and isinstance(rag_results, list):
+                    for doc in rag_results:
+                        if isinstance(doc, dict):
+                            # Prefer summary, then key_points, then content
+                            doc_text = doc.get("summary") or doc.get("key_points") or doc.get("content") or ""
+                        else:
+                            doc_text = str(doc)
+                        if doc_text:
+                            rag_docs.append(doc_text)
+            except Exception as e:
+                logger.warning(f"RAG retrieval failed: {e}")
+                rag_docs = []
+
+            # --- If poker context detected, run simulation with RAG docs ---
+            simulation_result = None
+            if any(k in parsed_context for k in ["hand", "position", "stack_size"]):
+                simulation_result = suggest_simulation(user_id, parsed_context, rag_docs=rag_docs)
+
             # Determine coaching style based on user profile and context
-            coaching_style = self._determine_coaching_style(user_profile, context)
+            coaching_style = self._determine_coaching_style(user_profile, merged_context)
             
-            # Search relevant knowledge
-            knowledge_context = self.rag_system.search(message, category="all", limit=3)
-            
+            # Use RAG docs as knowledge_context for system prompt (or empty list)
+            knowledge_context = rag_docs if rag_docs else []
+
             # Build system prompt
             system_prompt = self._build_system_prompt(coaching_style, user_profile, knowledge_context)
             
             # Build conversation context
-            conversation_context = self._build_conversation_context(conversation_history, message, context)
+            conversation_context = self._build_conversation_context(conversation_history, message, merged_context)
             
             # Generate response using OpenAI
             response = self.client.chat.completions.create(
@@ -88,6 +190,17 @@ class PokerCoachingAgent:
             )
             
             response_text = response.choices[0].message.content
+
+            # --- NEW: Integrate simulation result into response ---
+            if simulation_result:
+                sim_text = (
+                    f"\n---\nPoker Simulation:\n"
+                    f"Scenario: {simulation_result.get('scenario')}\n"
+                    f"Recommended Action: {simulation_result.get('action')}\n"
+                    f"Strategic Guidance: {simulation_result.get('guidance')}\n"
+                    f"Stack Size: {simulation_result.get('stack_size')}\n"
+                )
+                response_text = sim_text + "\n" + response_text
             
             # Parse response and extract components
             parsed_response = self._parse_response(response_text)
@@ -95,13 +208,17 @@ class PokerCoachingAgent:
             # Update user profile based on interaction
             self._update_user_insights(user_id, message, parsed_response, user_profile)
             
-            return {
+            response_dict = {
                 "message": parsed_response.message,
                 "context": parsed_response.context,
                 "suggestions": parsed_response.suggestions,
                 "emotional_tone": parsed_response.emotional_tone,
                 "follow_up_questions": parsed_response.follow_up_questions
             }
+            # Add rag_debug if present in simulation_result
+            if simulation_result and "rag_debug" in simulation_result:
+                response_dict["rag_debug"] = simulation_result["rag_debug"]
+            return response_dict
             
         except Exception as e:
             logger.error(f"Error generating coaching response: {str(e)}")
@@ -353,4 +470,3 @@ Provide your response as natural conversation, but include:
         
         questions = self.profiling_questions.get(category, self.profiling_questions['goals_motivation'])
         return random.choice(questions)
-

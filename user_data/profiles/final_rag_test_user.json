@@ -1,0 +1,28 @@
+{
+  "user_id": "final_rag_test_user",
+  "name": "User_final_ra",
+  "email": "",
+  "skill_level": "beginner",
+  "preferred_games": [
+    "texas_holdem"
+  ],
+  "goals": [],
+  "psychological_profile": {
+    "risk_tolerance": "unknown",
+    "emotional_regulation": "unknown",
+    "learning_style": "unknown",
+    "motivation_type": "unknown",
+    "communication_preference": "supportive"
+  },
+  "session_history": [],
+  "preferences": {
+    "coaching_style": "supportive",
+    "notification_frequency": "daily",
+    "privacy_level": "standard",
+    "language": "english"
+  },
+  "created_date": "2025-07-23T12:18:34.246534",
+  "last_active": "2025-07-23T12:18:34.246552",
+  "coaching_style_preference": "supportive",
+  "timezone": "UTC"
+}
